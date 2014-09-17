@@ -12,6 +12,12 @@ use Application\Service\AbstractService;
 
 class CampaignService extends AbstractService
 {
+    const POINTS = "T";
+    const VISITS = "V";
+    const DOLLARS = "D";
+    const BUYX = "S";
+    const GIFTCARDS = "G";
+
     public function getActiveCampaigns($accountId)
     {
         $fields = "campaigns.campaign_id, campaigns.campaign_name";
@@ -88,6 +94,26 @@ class CampaignService extends AbstractService
             "valuePerDay" => $valuePerDay,
             "transactionPerDay" => $transactionPerDay
         );
+    }
+
+    public function getType($campaignId)
+    {
+        $fields = "campaign_type";
+        $entities = "campaigns";
+        $query = " WHERE campaign_id = '{$campaignId}'";
+
+        $type = $this->select($fields, $query, $entities);
+        $type = $type[0]['campaign_type'];
+
+        return $type;
+    }
+
+    public function getPromotions($campaignId)
+    {
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $promotions = $entityManager->getRepository('Campaign\Entity\Promotion\Promotion')->findBy(array('campaign_id' => $campaignId));
+
+        return $promotions;
     }
 
 }

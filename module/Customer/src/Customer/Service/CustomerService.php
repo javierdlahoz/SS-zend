@@ -92,4 +92,25 @@ class CustomerService extends AbstractService
         $this->insert($customerArray);
     }
 
+    public function edit($customer, $accountId)
+    {
+        $this->setEntity(self::PROFILE.$accountId);
+
+        $customerArray = array(
+            "first_name" => $customer->getFirstName(),
+            "last_name" => $customer->getLastName(),
+            "email" => $customer->getEmail(),
+            "phone" => $customer->getPhone(),
+            "card_number" => $customer->getCardNumber(),
+            "city"      => $customer->getCity(),
+            "state"     => $customer->getState(),
+            "country"   => $customer->getCountry(),
+            "address1"  => $customer->getAddress1(),
+            "address2"  => $customer->getAddress2()
+        );
+
+        $where = array('card_code' => $customer->getCardCode());
+        $this->edit($customerArray, $where);
+    }
+
 }

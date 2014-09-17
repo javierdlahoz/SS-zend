@@ -21,6 +21,9 @@ return array(
         'factories' => array(
             'transactionService' => function ($serviceManager){
                     return new Service\TransactionService($serviceManager);
+                },
+            'transactionAdapter' => function ($serviceManager){
+                    return new Adapter\TransactionAdapter($serviceManager);
                 }
         )
     ),

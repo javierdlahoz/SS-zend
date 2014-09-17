@@ -64,6 +64,12 @@ class AccountUser
     private $user_deleted;
 
     /**
+     * @ORM\Column(type="integer", name="user_pin", nullable=false)
+     * @var integer
+     */
+    private $user_pin;
+
+    /**
      * @ORM\Column(type="string", name="user_role", nullable=false)
      * @var string
      */
@@ -195,6 +201,30 @@ class AccountUser
     public function getRole()
     {
         return $this->role;
+    }
+
+    /**
+     * @param int $user_pin
+     */
+    public function setUserPin($user_pin)
+    {
+        $this->user_pin = $user_pin;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserPin()
+    {
+        return $this->user_pin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiToken()
+    {
+        return sha1($this->getPassword());
     }
 
 }

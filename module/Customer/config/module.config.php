@@ -21,6 +21,9 @@ return array(
         'factories' => array(
             'customerService' => function ($serviceManager){
                     return new Service\CustomerService($serviceManager);
+                },
+            'customerAdapter' => function ($serviceManager){
+                    return new Adapter\CustomerAdapter($serviceManager);
                 }
         )
     ),

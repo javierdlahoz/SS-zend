@@ -13,6 +13,7 @@ use Zend\View\Model\JsonModel;
 use User\Helper\UserHelper;
 use Customer\Facade\CustomerFacade;
 use Application\Helper\RequestHelper;
+use Customer\Facade\BalanceFacade;
 
 class CustomerController extends AbstractRestfulController
 {
@@ -91,6 +92,26 @@ class CustomerController extends AbstractRestfulController
         {
             $this->getServiceLocator()->get('customerService')->add($this->getRequest()->getPost(), $user->getAccount());
             return new JsonModel(array('message' => "Customer added succesfully"));
+        }
+    }
+
+    public function balancesAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
+        {
+            $customerCode = $this->getRequest()->getPost()->get('customerCode');
+            $campaigns = \Campaign\Facade\CampaignFacade::formatCampaignList(
+                $this->getServiceLocator()->get('campaignService')->getActiveCampaigns($user->getAccount()));
+
+            $customerAdapter = $this->getServiceLocator()->get('customerAdapter');
+            $customerAdapter->setUser($user);
+            foreach($campaigns as $campaign)
+            {
+                $balances[] = $customerAdapter->getBalance($customerCode, $campaign['id']);
+            }
+
+            return new JsonModel(BalanceFacade::formatBalanceCollection($balances));
         }
     }
 }

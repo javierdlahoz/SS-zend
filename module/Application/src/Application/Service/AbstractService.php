@@ -218,6 +218,9 @@ class AbstractService
         return $result;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function validate()
     {
         if(empty($this->entity))
@@ -226,6 +229,10 @@ class AbstractService
         }
     }
 
+    /**
+     * @param $result
+     * @return array
+     */
     protected function toArray($result)
     {
         $results = array();
@@ -236,6 +243,9 @@ class AbstractService
         return $results;
     }
 
+    /**
+     * @return null
+     */
     protected function getAccountIdFromEntityName()
     {
 
@@ -259,6 +269,9 @@ class AbstractService
         }
     }
 
+    /**
+     * @return array
+     */
     protected function getEntityNames()
     {
         $accountId = $this->getAccountId();
@@ -271,14 +284,18 @@ class AbstractService
         );
     }
 
-    protected function insert($abstracObject)
+    /**
+     * @param $abstractObject
+     * @throws \Exception
+     */
+    protected function insert($abstractObject)
     {
         $query = "INSERT INTO {$this->getEntity()} ";
         $fields = "";
         $values = "";
 
         $isFirst = true;
-        foreach($abstracObject as $key => $value)
+        foreach($abstractObject as $key => $value)
         {
             if($isFirst)
             {
@@ -305,4 +322,60 @@ class AbstractService
 
     }
 
+    /**
+     * @param $abstractObject
+     * @param $keysObject
+     * @throws \Exception
+     */
+    protected function edit($abstractObject, $keysObject)
+    {
+        $query = "UPDATE {$this->getEntity()} SET ";
+        $fields = "";
+
+        $isFirst = true;
+        foreach($abstractObject as $key => $value)
+        {
+            if($isFirst)
+            {
+                if($value!=null)
+                {
+                    $fields = $key." = '{$value}'";
+                    $isFirst = false;
+                }
+            }
+            else
+            {
+                if($value!=null)
+                {
+                    $fields .= ", ".$key." = '{$value}'";
+                }
+            }
+        }
+
+        $query .= $fields;
+        $isFirst = true;
+        $where = " WHERE ";
+        foreach($keysObject as $key => $value)
+        {
+            if($isFirst)
+            {
+                $where .= $key." = '{$value}' ";
+                $isFirst = false;
+            }
+            else
+            {
+                $where .= "AND ".$key." = '{$value}' ";
+            }
+        }
+        $query .= $where;
+
+        try
+        {
+            $this->executeQuery($query);
+        }
+        catch(\Exception $ex)
+        {
+            throw new \Exception($ex->getMessage());
+        }
+    }
 }

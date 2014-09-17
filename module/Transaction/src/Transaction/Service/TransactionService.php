@@ -16,15 +16,54 @@ class TransactionService extends AbstractService
 
     const LIMIT = 20;
 
+    /**
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
     public function getThisMonthTransactions($accountId)
     {
         $this->setEntity(self::VISIT.$accountId);
-        $query = "WHERE date >= '{$this->getDates()->getStartDate()}' and date <= '{$this->getDates()->getEndDate()}'";
+        $query = "WHERE date >= '{$this->getDates()->getStartDate()}' AND date <= '{$this->getDates()->getEndDate()}' LIMIT ".self::LIMIT;
         $results = $this->count($query);
 
         return $results;
     }
 
+    /**
+     * @param $customerCode
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
+    public function getThisMonthTransactionsByCustomer($customerCode, $accountId)
+    {
+        $this->setEntity(self::VISIT.$accountId);
+        $query = "WHERE date >= '{$this->getDates()->getStartDate()}' AND date <= '{$this->getDates()->getEndDate()}' AND code = '{$customerCode}' LIMIT ".self::LIMIT;
+        $results = $this->count($query);
+
+        return $results;
+    }
+
+    /**
+     * @param $customerCode
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
+    public function getLastTransactionByCustomer($customerCode, $accountId)
+    {
+        $this->setEntity(self::VISIT.$accountId);
+        $query = "WHERE code = '{$customerCode}' AND {$this->getEntity()}.campaign_id = campaigns.campaign_id ORDER BY date DESC LIMIT ".self::LIMIT;
+        $fields = "campaigns.campaign_name, campaigns.campaign_type, {$this->getEntity()}.date, {$this->getEntity()}.amount";
+        $entities = "{$this->getEntity()} JOIN campaigns";
+        $results = $this->select($fields, $query, $entities);
+
+        return $results;
+    }
+
+    /**
+     * @param $transactionNumber
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
     public function getLastTransaction($transactionNumber, $accountId)
     {
         $this->setAccountId($accountId);
@@ -37,6 +76,9 @@ class TransactionService extends AbstractService
         return $results;
     }
 
+    /**
+     * @return string
+     */
     private function prepareFieldsForLastTransactions()
     {
         $entityNames = $this->getEntityNames();
@@ -48,12 +90,18 @@ class TransactionService extends AbstractService
         return $fields;
     }
 
+    /**
+     * @return string
+     */
     private function prepareEntitiesForLastTransactions()
     {
         $entityNames = $this->getEntityNames();
         return $entityNames['visits']." JOIN ".$entityNames['profiles']." JOIN campaigns";
     }
 
+    /**
+     * @return string
+     */
     private function prepareQueryForLastTransactions()
     {
         $entityNames = $this->getEntityNames();
@@ -64,6 +112,11 @@ class TransactionService extends AbstractService
         return $query;
     }
 
+    /**
+     * @param $code
+     * @param $accountId
+     * @return array
+     */
     public function getByCode($code, $accountId)
     {
         $this->setEntity(self::VISIT.$accountId);
@@ -79,6 +132,12 @@ class TransactionService extends AbstractService
         return $transactions;
     }
 
+    /**
+     * @param $code
+     * @param $campaignId
+     * @param $accountId
+     * @return array
+     */
     public function getByCodeAndCampaignId($code, $campaignId, $accountId)
     {
         $this->setEntity(self::VISIT.$accountId);
@@ -94,6 +153,10 @@ class TransactionService extends AbstractService
         return $transactions;
     }
 
+    /**
+     * @param $post
+     * @param $accountId
+     */
     public function add($post, $accountId)
     {
         $this->setEntity(self::VISIT.$accountId);

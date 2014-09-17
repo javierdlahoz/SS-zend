@@ -10,6 +10,10 @@ namespace Transaction\Facade;
 
 class TransactionFacade
 {
+    /**
+     * @param $customer
+     * @return array
+     */
     public function getCustomerData($customer)
     {
         return array(
@@ -19,6 +23,10 @@ class TransactionFacade
         );
     }
 
+    /**
+     * @param $lastTransactionsSQLResult
+     * @return array
+     */
     public function formatLastTransactions($lastTransactionsSQLResult)
     {
         $lastTransactions = array();
@@ -34,6 +42,10 @@ class TransactionFacade
         return $lastTransactions;
     }
 
+    /**
+     * @param $transactionObject
+     * @return array
+     */
     public function formatTransactionObject($transactionObject)
     {
         if($transactionObject->getRedeemed() == "Y")
@@ -54,6 +66,10 @@ class TransactionFacade
         );
     }
 
+    /**
+     * @param $transactionCollection
+     * @return array
+     */
     public function formatTransactionCollection($transactionCollection)
     {
         foreach($transactionCollection as $transactionObject)
@@ -61,5 +77,24 @@ class TransactionFacade
             $formattedTransactionCollection[] = self::formatTransactionObject($transactionObject);
         }
         return $formattedTransactionCollection;
+    }
+
+    /**
+     * @param $lastTransactionsCollection
+     * @return array
+     */
+    public function formatLastTransactionByCustomer($lastTransactionsCollection)
+    {
+        foreach($lastTransactionsCollection as $transaction)
+        {
+            $lastTransactions[] = array(
+                'campaignName' => $transaction['campaign_name'],
+                'campaignType' => $transaction['campaign_type'],
+                'date' => $transaction['date'],
+                'amount' => $transaction['amount']
+            );
+        }
+
+        return $lastTransactions;
     }
 }

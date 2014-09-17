@@ -40,7 +40,7 @@ class CustomerFacade
             "firstName" => $customer->getFirstName(),
             "lastName"  => $customer->getLastName(),
             "cardCode"  => $customer->getCardCode(),
-            "CardNumber" => $customer->getCardNumber(),
+            "cardNumber" => $customer->getCardNumber(),
             "phone"     => $customer->getPhone(),
             "email"     => $customer->getEmail(),
             "city"      => $customer->getCity(),

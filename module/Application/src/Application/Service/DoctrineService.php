@@ -60,4 +60,5 @@ abstract class DoctrineService
     }
 
     public abstract function init();
+
 }

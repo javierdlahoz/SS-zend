@@ -78,4 +78,18 @@ return array(
             ),
         ),
     ),
+    'doctrine' => array(
+        'driver' => array(
+            'campaign_entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => array(__DIR__ . '/../src/Campaign/Entity')
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Campaign\Entity' =>  'campaign_entity'
+                ),
+            ),
+        ),
+    ),
 );

@@ -6,9 +6,27 @@ class UserHelper
 {
     const ACCOUNT = "account";
 
-    function __contruct($serviceLocator)
+    private $serviceLocator;
+
+    function __construct($serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
+    }
+
+    /**
+     * @param mixed $serviceLocator
+     */
+    public function setServiceLocator($serviceLocator)
+    {
+        $this->serviceLocator = $serviceLocator;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getServiceLocator()
+    {
+        return $this->serviceLocator;
     }
 
     /**
@@ -36,5 +54,18 @@ class UserHelper
         {
             throw new \Exception("You don't have access to this function");
         }
+    }
+
+    public function getApiCredentials($user)
+    {
+        $accounts = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager')
+                        ->getRepository('User\Entity\AccountUser')->findBy(array('account_id' => $user->getAccount()));
+
+        $account = $accounts[0];
+        return array(
+            "userId" => $user->getUsername(),
+            "token" => $account->getApiToken(),
+            "accountId" => $user->getAccount()
+        );
     }
 }
