@@ -21,7 +21,6 @@ class Module
     {
         $eventManager = $e->getApplication()->getEventManager();
         $eventManager->getSharedManager();
-        //controller not found, invalid, or route is not matched anymore
 
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, 
                array($this,
@@ -30,6 +29,7 @@ class Module
 
     public function getConfig()
     {
+        header("Access-Control-Allow-Origin: *");
         return include __DIR__ . '/config/module.config.php';
     }
 
@@ -49,7 +49,6 @@ class Module
         $error  = $e->getError();
         $logText =  'Internal server error';
         $statusCode = 500;
-		$errorCode = 0;
 
         if ($error == Application::ERROR_CONTROLLER_NOT_FOUND) {
             //there is no controller named $e->getRouteMatch()->getParam('controller')
