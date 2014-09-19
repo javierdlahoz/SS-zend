@@ -19,6 +19,8 @@ abstract class StickyStreetAdapter {
     protected $params;
     protected $user;
 
+    const API_VERSION = "1.5";
+
 
     function __construct($serviceLocator)
     {
@@ -113,8 +115,9 @@ abstract class StickyStreetAdapter {
 
     /**
      * @param null $params
-     * @return bool
+     * @param bool $hasResponse
      * @throws \Exception
+     * @return bool
      */
     protected function sendRequest($params = null, $hasResponse = false)
     {
@@ -134,7 +137,7 @@ abstract class StickyStreetAdapter {
         {
             if($hasResponse)
             {
-                return $response->getBody();
+                return json_decode($response->getBody(), true);
             }
             else
             {

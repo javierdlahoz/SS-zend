@@ -20,9 +20,14 @@ class CampaignService extends AbstractService
     const BUYX = "S";
     const GIFTCARDS = "G";
 
+    const BUYX_REWARDS = "buyXget1free_rewards";
     const VISITS_REWARDS = "visits_rewards";
     const POINTS_REWARDS = "accumulated_dollars_rewards";
 
+    /**
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
     public function getActiveCampaigns($accountId)
     {
         $fields = "campaigns.campaign_id, campaigns.campaign_name";
@@ -32,6 +37,11 @@ class CampaignService extends AbstractService
         return $this->select($fields, $query, $entities);
     }
 
+    /**
+     * @param $accountId
+     * @param $campaignId
+     * @return \Application\Service\mysqli_result
+     */
     private function getDailyVolumePerCampaign($accountId, $campaignId)
     {
         $this->setEntity(self::VISIT.$accountId);
@@ -41,6 +51,10 @@ class CampaignService extends AbstractService
         return $this->select($fields, $query);
     }
 
+    /**
+     * @param $accountId
+     * @return array
+     */
     public function getDailyVolumeAllCampaigns($accountId)
     {
         $campaigns = $this->getActiveCampaigns($accountId);
@@ -58,6 +72,10 @@ class CampaignService extends AbstractService
         return $dailyVolumes;
     }
 
+    /**
+     * @param $dailyVolumePerCampaign
+     * @return array
+     */
     private function getDailyVolumesTotals($dailyVolumePerCampaign)
     {
         $valuePerDay = 0;
@@ -101,6 +119,10 @@ class CampaignService extends AbstractService
         );
     }
 
+    /**
+     * @param $campaignId
+     * @return \Application\Service\mysqli_result
+     */
     public function getType($campaignId)
     {
         $fields = "campaign_type";
@@ -113,6 +135,10 @@ class CampaignService extends AbstractService
         return $type;
     }
 
+    /**
+     * @param $campaignId
+     * @return mixed
+     */
     public function getPromotions($campaignId)
     {
         $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
@@ -121,6 +147,10 @@ class CampaignService extends AbstractService
         return $promotions;
     }
 
+    /**
+     * @param $campaignId
+     * @return array
+     */
     public function getRewards($campaignId)
     {
         $type = $this->getType($campaignId);
@@ -138,6 +168,10 @@ class CampaignService extends AbstractService
 
     }
 
+    /**
+     * @param $campaignId
+     * @return \Application\Service\mysqli_result
+     */
     private function getVisitRewards($campaignId)
     {
         $entity = self::VISITS_REWARDS;
@@ -148,6 +182,10 @@ class CampaignService extends AbstractService
         return $rewards;
     }
 
+    /**
+     * @param $campaignId
+     * @return \Application\Service\mysqli_result
+     */
     private function getPointRewards($campaignId)
     {
         $entity = self::POINTS_REWARDS;
@@ -156,5 +194,18 @@ class CampaignService extends AbstractService
 
         $rewards = $this->select($fields, $query, $entity);
         return $rewards;
+    }
+
+    /**
+     * @param $campaignId
+     * @return \Application\Service\mysqli_result
+     */
+    public function getBuyXRewards($campaignId)
+    {
+        $entity = self::BUYX_REWARDS;
+        $fields = "*";
+        $query = " WHERE campaign_id = '{$campaignId}' AND service_product != 'default'";
+
+        return $this->select($fields, $query, $entity);
     }
 }

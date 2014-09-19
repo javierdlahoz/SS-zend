@@ -13,7 +13,7 @@ class PointRewardFacade implements IRewardsFacade{
     public function formatReward($reward)
     {
         return array(
-            'id' => $reward['reward_id'],
+            'id' => $reward['unique_id'],
             'description' => $reward['reward_description'],
             'level' => $reward['dollars_accumulated']
         );

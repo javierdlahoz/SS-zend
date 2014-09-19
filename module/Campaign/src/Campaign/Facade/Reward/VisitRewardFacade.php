@@ -8,14 +8,12 @@
 
 namespace Campaign\Facade\Reward;
 
-use Campaign\Facade\Reward\IRewardsFacade;
-
 class VisitRewardFacade implements IRewardsFacade{
 
     public function formatReward($reward)
     {
         return array(
-            'id' => $reward['reward_id'],
+            'id' => $reward['unique_id'],
             'description' => $reward['reward_description'],
             'level' => $reward['number_visits']
         );
@@ -30,4 +28,4 @@ class VisitRewardFacade implements IRewardsFacade{
 
         return $rewards;
     }
-} 
+}

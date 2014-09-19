@@ -13,8 +13,6 @@ class BalanceFacade {
 
     public function formatBalance($balanceObject)
     {
-        $balanceObject = json_decode($balanceObject, true);
-
         if(isset($balanceObject['campaign']['customer']['items']))
         {
             $items = $balanceObject['campaign']['customer']['items'];

@@ -21,6 +21,9 @@ return array(
         'factories' => array(
             'campaignService' => function ($serviceManager){
                     return new Service\CampaignService($serviceManager);
+                },
+            'campaignAdapter' => function ($serviceManager){
+                    return new Adapter\CampaignAdapter($serviceManager);
                 }
         )
     ),

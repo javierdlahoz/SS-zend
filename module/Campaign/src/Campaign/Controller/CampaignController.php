@@ -15,6 +15,7 @@ use Campaign\Facade\CampaignFacade;
 use Campaign\Facade\Promotion\PromotionFacade;
 use Application\Helper\RequestHelper;
 use Customer\Facade\BalanceFacade;
+use Campaign\Facade\Item\ItemFacace;
 
 class CampaignController extends AbstractRestfulController
 {
@@ -77,6 +78,9 @@ class CampaignController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function rewardsAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -87,4 +91,18 @@ class CampaignController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
+    public function itemsAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
+        {
+            $campaignId = $this->getRequest()->getPost()->get('campaignId');
+            $campaignService = $this->getServiceLocator()->get('campaignService');
+
+            return new JsonModel(ItemFacace::formatItemCollection($campaignService->getBuyXRewards($campaignId)));
+        }
+    }
 }

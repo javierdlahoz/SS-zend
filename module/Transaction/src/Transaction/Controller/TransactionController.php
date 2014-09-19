@@ -118,8 +118,7 @@ class TransactionController extends AbstractRestfulController
                 $sendEmail = "Y";
             }
 
-            $serviceProduct = $this->getRequest()->getPost()->get('serviceProduct');
-            $buyXQty = $this->getRequest()->getPost()->get('buyXQty');
+            $itemId = $this->getRequest()->getPost()->get('itemId');
             $promoId = $this->getRequest()->getPost()->get('promoId');
             $authorization = $this->getRequest()->getPost()->get('authorization');
 
@@ -127,7 +126,7 @@ class TransactionController extends AbstractRestfulController
             $transactionAdapter->setUser($user);
 
             if($transactionAdapter->record($customerCode, $campaignId, $amount,
-                       $sendEmail, $serviceProduct, $buyXQty, $promoId, $authorization))
+                       $sendEmail, $itemId, $promoId, $authorization))
             {
                 return new JsonModel(array('message' => 'Transaction successfully done'));
             }

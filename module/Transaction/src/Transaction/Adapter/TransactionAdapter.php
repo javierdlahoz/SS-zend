@@ -38,6 +38,10 @@ class TransactionAdapter extends StickyStreetAdapter
                 break;
 
             default:
+                if($rewardId == null)
+                {
+                    $rewardId = $points;
+                }
                 return $this->redeemGenerics($rewardId);
         }
     }
@@ -54,13 +58,13 @@ class TransactionAdapter extends StickyStreetAdapter
         {
             $this->params['reward_to_redeem'] = $rewardId;
         }
-        elseif($points != null)
+        if($points != null)
         {
-            $this->params['custom_points_redeem'] = $rewardId;
+            $this->params['custom_points_redeem'] = $points;
         }
         elseif($dollars != null)
         {
-            $this->params['custom_dollars_redeem'] = $rewardId;
+            $this->params['custom_dollars_redeem'] = $dollars;
         }
 
         return $this->sendRequest();
@@ -87,8 +91,8 @@ class TransactionAdapter extends StickyStreetAdapter
     }
 
     public function record($customerCode, $campaignId, $amount = null,
-                           $sendEmail = null, $serviceProduct = null,
-                           $buyXQty = null, $promoId = null, $authorization = null)
+                           $sendEmail = null, $itemId = null,
+                           $promoId = null, $authorization = null)
     {
         $this->prepareParams($customerCode, $campaignId, $authorization);
         $this->params['type'] = self::RECORD;
@@ -110,7 +114,7 @@ class TransactionAdapter extends StickyStreetAdapter
                 break;
 
             case CampaignService::BUYX:
-                return $this->recordBuyX($serviceProduct, $buyXQty);
+                return $this->recordBuyX($itemId, $amount);
                 break;
 
             default:
@@ -156,16 +160,16 @@ class TransactionAdapter extends StickyStreetAdapter
     }
 
     /**
-     * @param $serviceProduct
-     * @param null $buyXQty
+     * @param $itemId
+     * @param null $amount
      * @return bool
      */
-    private function recordBuyX($serviceProduct, $buyXQty = null)
+    private function recordBuyX($itemId, $amount = null)
     {
-        $this->params['service_product'] = $serviceProduct;
-        if($buyXQty != null)
+        $this->params['service_product'] = $itemId;
+        if($amount != null)
         {
-            $this->params['buyx_quantity'] = $buyXQty;
+            $this->params['buyx_quantity'] = $amount;
         }
 
         return $this->sendRequest();
