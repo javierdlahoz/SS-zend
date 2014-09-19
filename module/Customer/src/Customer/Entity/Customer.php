@@ -11,16 +11,19 @@ namespace Customer\Entity;
 
 class Customer{
 
-    function __construct($SQLData)
+    function __construct($SQLData = null)
     {
-        foreach($SQLData as $key => $value)
+        if($SQLData != null)
         {
-            try{
-                $this->{$key} = $value;
-            }
-            catch(\Exception $ex)
+            foreach($SQLData as $key => $value)
             {
-                //nothing here
+                try{
+                    $this->{$key} = $value;
+                }
+                catch(\Exception $ex)
+                {
+                    //nothing here
+                }
             }
         }
     }
@@ -403,5 +406,58 @@ class Customer{
         return $this->zip;
     }
 
+    /**
+     * @param $post
+     */
+    public function fillFromPost($post)
+    {
+        if($post->get('firstName') != null){
+            $this->first_name = $post->get('firstName');
+        }
+
+        if($post->get('lastName') != null){
+            $this->last_name = $post->get('lastName');
+        }
+
+        if($post->get('cardCode') != null){
+            $this->card_code = $post->get('cardCode');
+        }
+
+        if($post->get('cardNumber') != null){
+            $this->card_number = $post->get('cardNumber');
+        }
+
+        if($post->get('phone') != null){
+            $this->phone = $post->get('phone');
+        }
+
+        if($post->get('email') != null){
+            $this->email = $post->get('email');
+        }
+
+        if($post->get('address1') != null){
+            $this->address1 = $post->get('address1');
+        }
+
+        if($post->get('address2') != null){
+            $this->address2 = $post->get('address2');
+        }
+
+        if($post->get('city') != null){
+            $this->city = $post->get('city');
+        }
+
+        if($post->get('state') != null){
+            $this->state = $post->get('state');
+        }
+
+        if($post->get('zip') != null){
+            $this->zip = $post->get('zip');
+        }
+
+        if($post->get('country') != null){
+            $this->country = $post->get('country');
+        }
+    }
 
 } 

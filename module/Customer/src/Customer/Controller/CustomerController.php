@@ -14,9 +14,13 @@ use User\Helper\UserHelper;
 use Customer\Facade\CustomerFacade;
 use Application\Helper\RequestHelper;
 use Customer\Facade\BalanceFacade;
+use Customer\Entity\Customer;
 
 class CustomerController extends AbstractRestfulController
 {
+    /**
+     * @return JsonModel
+     */
     public function countAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -30,6 +34,9 @@ class CustomerController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function mostActiveAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -49,6 +56,9 @@ class CustomerController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function thisMonthAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -59,6 +69,9 @@ class CustomerController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function lastCustomersAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -71,6 +84,9 @@ class CustomerController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function lookupAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -85,6 +101,9 @@ class CustomerController extends AbstractRestfulController
 
     }
 
+    /**
+     * @return JsonModel
+     */
     public function addAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -95,6 +114,9 @@ class CustomerController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function balancesAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -112,6 +134,23 @@ class CustomerController extends AbstractRestfulController
             }
 
             return new JsonModel(BalanceFacade::formatBalanceCollection($balances));
+        }
+    }
+
+    /**
+     * @return JsonModel
+     */
+    public function editAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
+        {
+            $customer = new Customer();
+            $customer->fillFromPost($this->getRequest()->getPost());
+            $customerService = $this->getServiceLocator()->get('customerService');
+            $customerService->editCustomer($customer, $user->getAccount());
+
+            return new JsonModel(array('message' => "Customer updated successfully"));
         }
     }
 }

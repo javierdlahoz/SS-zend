@@ -84,7 +84,7 @@ class TransactionController extends AbstractRestfulController
         if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
         {
             $campaignId = $this->getRequest()->getPost()->get('campaignId');
-            $code = $this->getRequest()->getPost()->get('code');
+            $code = $this->getRequest()->getPost()->get('customerCode');
             $rewardId = $this->getRequest()->getPost()->get('rewardId');
             $points = $this->getRequest()->getPost()->get('points');
             $dollars = $this->getRequest()->getPost()->get('dollars');
@@ -111,12 +111,13 @@ class TransactionController extends AbstractRestfulController
             $customerCode = $this->getRequest()->getPost()->get('customerCode');
             $campaignId = $this->getRequest()->getPost()->get('campaignId');
             $amount = $this->getRequest()->getPost()->get('amount');
-            $sendEmail = $this->getRequest()->getPost()->get('customerCode');
+            $sendEmail = $this->getRequest()->getPost()->get('sendEmail');
 
             if($sendEmail ==  true)
             {
                 $sendEmail = "Y";
             }
+
             $serviceProduct = $this->getRequest()->getPost()->get('serviceProduct');
             $buyXQty = $this->getRequest()->getPost()->get('buyXQty');
             $promoId = $this->getRequest()->getPost()->get('promoId');

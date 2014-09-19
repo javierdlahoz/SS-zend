@@ -27,7 +27,7 @@ class BalanceFacade {
         return array(
             "campaignId" => $balanceObject['campaign']['campaign_id'],
             "campaignName" => $balanceObject['campaign']['campaign_name'],
-            "balance" => number_format($balance),
+            "balance" => $balance,
             "items" => $items,
             "campaignType" => $balanceObject['campaign']['campaign_type']
         );

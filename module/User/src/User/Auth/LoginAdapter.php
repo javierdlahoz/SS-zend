@@ -30,7 +30,6 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
             "username" => $request['username'],
             "password" => $request['password'],
             "passwordVerify" => $request['password']
-           // "email" => $request['email']
         );
 
         $user  = new User();
@@ -69,7 +68,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         }
         else
         {
-            throw new \Exception(json_encode($errors));
+            throw new \Exception("There's no user");
         }
     }
 
@@ -82,9 +81,29 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
     {
 		$adapter = $this->getAuthPlugin()->getAuthAdapter();
 
-		$params = new Parameters();
-		$params->set('identity', $request->get('username'));
-		$params->set('credential', $request->get('password'));
+        $pin = $request->get('pin');
+        $accountId = $request->get('accountId');
+
+
+        if(!empty($pin))
+        {
+            $user = $this->getUserByPin($pin, $accountId);
+            $credentials =  array(
+                'username' => $user->getUsername(),
+                'password' => $user->getPassword()
+            );
+        }
+        else
+        {
+            $credentials =  array(
+                'username' => $request->get('username'),
+                'password' => $request->get('password')
+            );
+        }
+
+        $params = new Parameters();
+        $params->set('identity', $credentials['username']);
+        $params->set('credential', $credentials['password']);
 		$emulatedRequest = new Request();
 		$emulatedRequest->setPost($params);
 		
@@ -98,12 +117,12 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         $auth = $this->getAuthPlugin()->getAuthService()->authenticate($adapter);
         if(!$auth->isValid())
         {
-            if($this->isRegistered($request))
+            if($this->isRegistered($credentials))
             {
                 throw new \Exception('Please, check your credentials');
             }
 
-            $accountUser = $this->getAccountUsersByParams($params);
+            $accountUser = $this->getAccountUsersByParams($params, $accountId);
             if($accountUser != null)
             {
                 return $this->createUserFromAccountUsers($accountUser);
@@ -201,13 +220,14 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 
     /**
      * @param $params
-     * @return null
+     * @param $accountId
      * @throws \Exception
+     * @return null
      */
-    private function getAccountUsersByParams($params)
+    private function getAccountUsersByParams($params, $accountId)
     {
         $entityManager = $this->getEntityManager();
-        $accounts = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('username' => $params['identity']));
+        $accounts = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('username' => $params['identity'], 'account_id' => $accountId));
 
         if(!empty($accounts))
         {
@@ -216,7 +236,10 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
                 return $accounts[0];
             }
         }
-        return null;
+        else
+        {
+            throw new \Exception('Please check your credentials');
+        }
     }
 
     /**
@@ -226,15 +249,9 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      */
     private function createUserFromAccountUsers($account)
     {
-        if($account->getRole() != "A")
-        {
-            throw new \Exception("You don't have enought priveleges to use this app");
-        }
-
         $request = array(
             'username' => $account->getUsername(),
             'password' => $account->getPassword(),
-            //'email' => $account->getContactEmail(),
             'type' => "account",
             'name' => $account->getFirstname()." ".$account->getLastname(),
             'account' => $account->getAccountId()
@@ -244,13 +261,14 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
     }
 
     /**
-     * @param $request
+     * @param $credentials
+     * @internal param $request
      * @return bool
      */
-    private function isRegistered($request)
+    private function isRegistered($credentials)
     {
         $entityManager = $this->getEntityManager();
-        $users = $entityManager->getRepository('User\Entity\User')->findBy(array('username' => $request->get('username')));
+        $users = $entityManager->getRepository('User\Entity\User')->findBy(array('username' => $credentials['username']));
 
         if(empty($users))
         {
@@ -262,10 +280,32 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         }
     }
 
+    /**
+     * Logout
+     */
     public function logout()
     {
 		parent::logout();
 	}
+
+    /**
+     * @param $pin
+     * @param $accountId
+     * @throws \Exception
+     * @return mixed
+     */
+    private function getUserByPin($pin, $accountId)
+    {
+        $entityManager = $this->getEntityManager();
+        $users = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('user_pin' => $pin, 'account_id' => $accountId));
+
+        if(empty($users))
+        {
+            throw new \Exception("There's no registered user with this PIN");
+        }
+
+        return $users[0];
+    }
 
     /**
      * @return mixed
@@ -282,14 +322,6 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
     {
 		return ($this->getServiceLocator()->get('zfcuser_register_form_hydrator'));
     }
-
-    /**
-     * @return mixed
-     */
-    private function getLoginForm()
-    {
-		return $this->getServiceLocator()->get('zfcuser_login_form');
-	}
 
     /**
      * @return mixed

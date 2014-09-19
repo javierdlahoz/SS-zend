@@ -33,6 +33,10 @@ class TransactionAdapter extends StickyStreetAdapter
                 return $this->redeemPoints($rewardId, $points, $dollars);
                 break;
 
+            case CampaignService::GIFTCARDS:
+                return $this->redeemGiftCard($points);
+                break;
+
             default:
                 return $this->redeemGenerics($rewardId);
         }
@@ -63,6 +67,16 @@ class TransactionAdapter extends StickyStreetAdapter
     }
 
     /**
+     * @param $amount
+     * @return bool
+     */
+    private function redeemGiftCard($amount)
+    {
+        $this->params['reward_to_redeem'] = $amount;
+        return $this->sendRequest();
+    }
+
+    /**
      * @param $rewardId
      * @return bool
      */
@@ -79,15 +93,16 @@ class TransactionAdapter extends StickyStreetAdapter
         $this->prepareParams($customerCode, $campaignId, $authorization);
         $this->params['type'] = self::RECORD;
 
+        if($sendEmail == "Y")
+        {
+            $this->params['send_transaction_email'] = $sendEmail;
+        }
+
         $campaignType = $this->getServiceLocator()->get('campaignService')->getType($campaignId);
         switch($campaignType)
         {
             case CampaignService::POINTS:
                 return $this->recordPoints($amount, $promoId);
-                break;
-
-            case CampaignService::VISITS:
-                return $this->recordEvent();
                 break;
 
             case CampaignService::GIFTCARDS:
@@ -97,6 +112,9 @@ class TransactionAdapter extends StickyStreetAdapter
             case CampaignService::BUYX:
                 return $this->recordBuyX($serviceProduct, $buyXQty);
                 break;
+
+            default:
+                return $this->recordEvent();
         }
     }
 

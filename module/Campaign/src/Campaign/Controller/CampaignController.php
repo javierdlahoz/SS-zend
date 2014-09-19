@@ -13,9 +13,14 @@ use Zend\View\Model\JsonModel;
 use User\Helper\UserHelper;
 use Campaign\Facade\CampaignFacade;
 use Campaign\Facade\Promotion\PromotionFacade;
+use Application\Helper\RequestHelper;
+use Customer\Facade\BalanceFacade;
 
 class CampaignController extends AbstractRestfulController
 {
+    /**
+     * @return JsonModel
+     */
     public function listAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -26,6 +31,9 @@ class CampaignController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function dailyVolumeAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -36,6 +44,9 @@ class CampaignController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function promotionsAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -45,6 +56,34 @@ class CampaignController extends AbstractRestfulController
             $promotions = $this->getServiceLocator()->get('campaignService')->getPromotions($campaignId);
 
             return new JsonModel(PromotionFacade::formatPromotionCollection($promotions));
+        }
+    }
+
+    /**
+     * @return JsonModel
+     */
+    public function balanceAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
+        {
+            $campaignId = $this->getRequest()->getPost()->get('campaignId');
+            $customerCode = $this->getRequest()->getPost()->get('customerCode');
+
+            $customerAdapter = $this->getServiceLocator()->get('customerAdapter');
+            $customerAdapter->setUser($user);
+
+            return new JsonModel(BalanceFacade::formatBalance($customerAdapter->getBalance($customerCode, $campaignId)));
+        }
+    }
+
+    public function rewardsAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
+        {
+            $campaignId = $this->getRequest()->getPost()->get('campaignId');
+            return new JsonModel($this->getServiceLocator()->get('campaignService')->getRewards($campaignId));
         }
     }
 

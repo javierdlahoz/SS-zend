@@ -163,6 +163,7 @@ class AbstractService
      */
     protected function executeQuery($query)
     {
+
         $this->connect();
         $result = mysqli_query($this->connection, $query);
         $this->disconnect();

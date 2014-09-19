@@ -9,6 +9,8 @@
 namespace Campaign\Service;
 
 use Application\Service\AbstractService;
+use Campaign\Facade\Reward\VisitRewardFacade;
+use Campaign\Facade\Reward\PointRewardFacade;
 
 class CampaignService extends AbstractService
 {
@@ -17,6 +19,9 @@ class CampaignService extends AbstractService
     const DOLLARS = "D";
     const BUYX = "S";
     const GIFTCARDS = "G";
+
+    const VISITS_REWARDS = "visits_rewards";
+    const POINTS_REWARDS = "accumulated_dollars_rewards";
 
     public function getActiveCampaigns($accountId)
     {
@@ -116,4 +121,40 @@ class CampaignService extends AbstractService
         return $promotions;
     }
 
+    public function getRewards($campaignId)
+    {
+        $type = $this->getType($campaignId);
+
+        switch($type)
+        {
+            case self::VISITS:
+                return VisitRewardFacade::formatRewardCollection($this->getVisitRewards($campaignId));
+                break;
+
+            case self::POINTS:
+                return PointRewardFacade::formatRewardCollection($this->getPointRewards($campaignId));
+                break;
+        }
+
+    }
+
+    private function getVisitRewards($campaignId)
+    {
+        $entity = self::VISITS_REWARDS;
+        $fields = "*";
+        $query = " WHERE campaign_id = '{$campaignId}'";
+
+        $rewards = $this->select($fields, $query, $entity);
+        return $rewards;
+    }
+
+    private function getPointRewards($campaignId)
+    {
+        $entity = self::POINTS_REWARDS;
+        $fields = "*";
+        $query = " WHERE campaign_id = '{$campaignId}'";
+
+        $rewards = $this->select($fields, $query, $entity);
+        return $rewards;
+    }
 }
