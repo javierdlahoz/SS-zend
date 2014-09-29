@@ -12,10 +12,13 @@ use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Setting\Facade\SettingFacade;
 use Setting\Facade\CustomerSettingFacade;
+use Application\Helper\RequestHelper;
 
 class SettingController extends AbstractRestfulController
 {
-
+    /**
+     * @return JsonModel
+     */
     public function loadAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -31,6 +34,9 @@ class SettingController extends AbstractRestfulController
         return new JsonModel(SettingFacade::formatSettings($settings[0]));
     }
 
+    /**
+     * @return JsonModel
+     */
     public function updateAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -44,6 +50,9 @@ class SettingController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     */
     public function loadCustomerSettingsAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
@@ -59,6 +68,9 @@ class SettingController extends AbstractRestfulController
         return new JsonModel(CustomerSettingFacade::formatCustomerSettings($customerSetting));
     }
 
+    /**
+     * @return JsonModel
+     */
     public function updateCustomerSettingsAction()
     {
 
@@ -70,6 +82,18 @@ class SettingController extends AbstractRestfulController
         if($confirmation)
         {
             return new JsonModel(array("message" => "Settings updated successfully"));
+        }
+    }
+
+    public function setLogoAction()
+    {
+        if(RequestHelper::isPost($this->getRequest()))
+        {
+            var_dump($_FILES);
+            die();
+            $files = $this->getRequest()->getFiles();
+            var_dump($files);
+            die();
         }
     }
 }

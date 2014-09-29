@@ -13,6 +13,7 @@ use Zend\View\Model\JsonModel;
 use User\Helper\UserHelper;
 use Transaction\Facade\TransactionFacade;
 use Application\Helper\RequestHelper;
+use Transaction\Facade\CustomFieldFacade;
 
 class TransactionController extends AbstractRestfulController
 {
@@ -69,7 +70,7 @@ class TransactionController extends AbstractRestfulController
             $code = $this->getRequest()->getPost()->get('code');
 
             $transactionHistory = $this->getServiceLocator()->get('transactionService')
-                        ->getByCodeAndCampaignId($code, $campaignId, $user->getAccount());
+                        ->getHistoryByCodeAndCampaignId($code, $campaignId, $user->getAccount());
 
             return new JsonModel(TransactionFacade::formatTransactionCollection($transactionHistory));
         }
@@ -125,27 +126,46 @@ class TransactionController extends AbstractRestfulController
             $transactionAdapter = $this->getServiceLocator()->get('transactionAdapter');
             $transactionAdapter->setUser($user);
 
+
             if($transactionAdapter->record($customerCode, $campaignId, $amount,
-                       $sendEmail, $itemId, $promoId, $authorization))
+                       $sendEmail, $itemId, $promoId, $authorization, $this->getRequest()->getPost()))
             {
                 return new JsonModel(array('message' => 'Transaction successfully done'));
             }
         }
     }
 
+    /**
+     * @return JsonModel
+     * @throws \Exception
+     */
     public function lastByCustomerAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();
-        if(UserHelper::isMerchant($user))
-        {
+        if (UserHelper::isMerchant($user)) {
             $customerCode = $this->getRequest()->getPost()->get('customerCode');
 
-            if($customerCode != null)
-            {
+            if ($customerCode != null) {
                 $transactions = $this->getServiceLocator()->get('transactionService')
                     ->getLastTransactionByCustomer($customerCode, $user->getAccount());
             }
             return new JsonModel(TransactionFacade::formatLastTransactionByCustomer($transactions));
+        }
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function customFieldsAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user))
+        {
+            return new JsonModel(CustomFieldFacade::formatCustomFieldCollection(
+                $this->getServiceLocator()->get('transactionService')
+                    ->getCustomFields($user->getAccount())
+            ));
         }
     }
 

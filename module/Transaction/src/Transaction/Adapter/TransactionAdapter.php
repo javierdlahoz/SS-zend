@@ -4,11 +4,31 @@ namespace Transaction\Adapter;
 
 use Campaign\Service\CampaignService;
 use Application\Adapter\StickyStreetAdapter;
+use Transaction\Facade\CustomFieldFacade;
 
 class TransactionAdapter extends StickyStreetAdapter
 {
     const REDEEM = "redeem";
     const RECORD = "record_activity";
+
+    /**
+     * @param $accountId
+     * @param $post
+     */
+    public function addCustomFieldsToParams($post)
+    {
+        $customFields = CustomFieldFacade::formatCustomFieldCollection(
+            $this->getServiceLocator()->get('transactionService')->getCustomFields($this->params['account_id']));
+
+        foreach($customFields as $customField)
+        {
+            $temp = $post->get($customField['name']);
+            if($temp != null)
+            {
+                $this->params[$customField['name']] = $temp;
+            }
+        }
+    }
 
     /**
      * @param $customerCode
@@ -92,10 +112,11 @@ class TransactionAdapter extends StickyStreetAdapter
 
     public function record($customerCode, $campaignId, $amount = null,
                            $sendEmail = null, $itemId = null,
-                           $promoId = null, $authorization = null)
+                           $promoId = null, $authorization = null, $post)
     {
         $this->prepareParams($customerCode, $campaignId, $authorization);
         $this->params['type'] = self::RECORD;
+        $this->addCustomFieldsToParams($post);
 
         if($sendEmail == "Y")
         {
@@ -133,7 +154,7 @@ class TransactionAdapter extends StickyStreetAdapter
         {
             $this->params['amount'] = $amount;
         }
-        elseif($promoId != null)
+        if($promoId != null)
         {
             $this->params['promo_id'] = $promoId;
         }

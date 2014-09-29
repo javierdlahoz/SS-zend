@@ -51,7 +51,7 @@ class TransactionService extends AbstractService
     public function getLastTransactionByCustomer($customerCode, $accountId)
     {
         $this->setEntity(self::VISIT.$accountId);
-        $query = "WHERE code = '{$customerCode}' AND {$this->getEntity()}.campaign_id = campaigns.campaign_id ORDER BY date DESC LIMIT ".self::LIMIT;
+        $query = "WHERE code = '{$customerCode}' AND {$this->getEntity()}.campaign_id = campaigns.campaign_id ORDER BY datetime_stamp DESC LIMIT ".self::LIMIT;
         $fields = "campaigns.campaign_name, campaigns.campaign_type, {$this->getEntity()}.date, {$this->getEntity()}.amount";
         $entities = "{$this->getEntity()} JOIN campaigns";
         $results = $this->select($fields, $query, $entities);
@@ -138,11 +138,31 @@ class TransactionService extends AbstractService
      * @param $accountId
      * @return array
      */
-    public function getByCodeAndCampaignId($code, $campaignId, $accountId)
+    public function getHistoryByCodeAndCampaignId($code, $campaignId, $accountId)
     {
         $this->setEntity(self::VISIT.$accountId);
         $fields = "*";
         $query = "WHERE code='{$code}' AND campaign_id='{$campaignId}' LIMIT ".self::LIMIT;
+
+        $sqlResults = $this->select($fields,$query);
+        foreach($sqlResults as $sqlResult)
+        {
+            $transactions[] = new Transaction($sqlResult);
+        }
+
+        return $transactions;
+    }
+
+    /**
+     * @param $code
+     * @param $accountId
+     * @return array
+     */
+    public function getHistoryByCode($code, $accountId)
+    {
+        $this->setEntity(self::VISIT.$accountId);
+        $fields = "*";
+        $query = "WHERE code='{$code}' ORDER BY datetime_stamp DESC LIMIT ".self::LIMIT;
 
         $sqlResults = $this->select($fields,$query);
         foreach($sqlResults as $sqlResult)
@@ -171,5 +191,17 @@ class TransactionService extends AbstractService
         );
 
         $this->insert($transactionArray);
+    }
+
+    /**
+     * @param $accountId
+     * @return mixed
+     */
+    public function getCustomFields($accountId)
+    {
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $customFields = $entityManager->getRepository('Transaction\Entity\Field\CustomField')->findBy(array('account_id' => $accountId, 'is_shown' => "Y"));
+
+        return $customFields;
     }
 }

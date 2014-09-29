@@ -53,10 +53,15 @@ class CustomerFacade
 
     public function formatCustomerCollection($customers)
     {
-        foreach($customers as $customer)
+        if($customers == null)
         {
-            $customerCollection[] = self::formatCustomerEntity($customer);
+            return null;
         }
-        return $customerCollection;
+        else {
+            foreach ($customers as $customer) {
+                $customerCollection[] = self::formatCustomerEntity($customer);
+            }
+            return $customerCollection;
+        }
     }
 }

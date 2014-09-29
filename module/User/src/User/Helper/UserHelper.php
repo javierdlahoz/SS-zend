@@ -2,6 +2,9 @@
 
 namespace User\Helper;
 
+use User\Entity\User;
+use Zend\View\Model\JsonModel;
+
 class UserHelper
 {
     const ACCOUNT = "account";
@@ -44,15 +47,20 @@ class UserHelper
         return true;
     }
 
+    /**
+     * @param $user
+     * @throws \Exception
+     * @return bool|JsonModel
+     */
     public function isMerchant($user)
     {
-        if(($user instanceof \User\Entity\User) && ($user->getType() == self::ACCOUNT))
+        if(($user instanceof User) && ($user->getType() == self::ACCOUNT) && ($user != null))
         {
             return true;
         }
         else
         {
-            throw new \Exception("You don't have access to this function");
+            throw new \Exception("You don't have permission to access this functionality");
         }
     }
 

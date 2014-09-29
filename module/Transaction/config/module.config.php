@@ -81,4 +81,18 @@ return array(
             ),
         ),
     ),
+    'doctrine' => array(
+        'driver' => array(
+            'transaction_entities' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => array(__DIR__ . '/../src/Transaction/Entity')
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Transaction\Entity' =>  'transaction_entities'
+                ),
+            ),
+        ),
+    ),
 );
