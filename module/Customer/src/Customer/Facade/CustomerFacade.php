@@ -7,7 +7,9 @@
  */
 
 namespace Customer\Facade;
+
 use Customer\Entity\Customer;
+use Customer\Facade\CustomFieldFacade;
 
 class CustomerFacade
 {
@@ -33,8 +35,10 @@ class CustomerFacade
      * @param $customer
      * @return array
      */
-    public function formatCustomerEntity($customer)
+    public function formatCustomerEntity(Customer $customer)
     {
+        //$customFields = CustomFieldFacade::formatCustomFieldCollection($customer->getCustomFields());
+
         return array(
             "id"        => $customer->getUniqueId(),
             "firstName" => $customer->getFirstName(),
@@ -47,7 +51,8 @@ class CustomerFacade
             "state"     => $customer->getState(),
             "country"   => $customer->getCountry(),
             "address1"  => $customer->getAddress1(),
-            "address2"  => $customer->getAddress2()
+            "address2"  => $customer->getAddress2(),
+            "customFields" => $customer->getCustomFields()
         );
     }
 

@@ -15,12 +15,19 @@ class CustomerService extends AbstractService
 {
     const FIELDS = "first_name, last_name, email, card_number";
 
+    /**
+     * @return \Application\Service\mysqli_result
+     */
     public function getCustomerCount()
     {
         $count = $this->count(null);
         return $count;
     }
 
+    /**
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
     public function getMostActive($accountId)
     {
         $this->setEntity(self::VISIT.$accountId);
@@ -31,6 +38,11 @@ class CustomerService extends AbstractService
         return $results;
     }
 
+    /**
+     * @param $code
+     * @param $accountId
+     * @return mixed
+     */
     public function getCustomerByCode($code, $accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
@@ -40,6 +52,10 @@ class CustomerService extends AbstractService
         return $results[0];
     }
 
+    /**
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
     public function getCustomersThisMonth($accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
@@ -48,6 +64,11 @@ class CustomerService extends AbstractService
         return $this->count($query);
     }
 
+    /**
+     * @param $customerNumber
+     * @param $accountId
+     * @return \Application\Service\mysqli_result
+     */
     public function getLastCustomers($customerNumber, $accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
@@ -56,6 +77,11 @@ class CustomerService extends AbstractService
         return $this->select(self::FIELDS, $query);
     }
 
+    /**
+     * @param $text
+     * @param $accountId
+     * @return array
+     */
     public function getByText($text, $accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
@@ -65,12 +91,17 @@ class CustomerService extends AbstractService
         $sqlResults = $this->select("*", $query);
         foreach($sqlResults as $sqlResult)
         {
-            $customers[] = new Customer($sqlResult);
+            $customers[] = new Customer($sqlResult, self::getCustomFields($accountId));
         }
 
         return $customers;
     }
 
+    /**
+     * @param $post
+     * @param $accountId
+     * @throws \Exception
+     */
     public function add($post, $accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
@@ -89,9 +120,20 @@ class CustomerService extends AbstractService
             "address2"  => $post->get('address2')
         );
 
+        $customFields = self::getCustomFields($accountId);
+        foreach($customFields as $customField)
+        {
+            $customerArray[$customField->getFieldName()] = $post->get($customField->getFieldName());
+        }
+
         $this->insert($customerArray);
     }
 
+    /**
+     * @param Customer $customer
+     * @param $accountId
+     * @throws \Exception
+     */
     public function editCustomer(Customer $customer, $accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
@@ -111,6 +153,15 @@ class CustomerService extends AbstractService
                 "address2"  => $customer->getAddress2()
             );
 
+            $customFields = $customer->getCustomFields();
+            if(count($customFields)>0)
+            {
+                foreach ($customFields as $customField)
+                {
+                    $customerArray[$customField['name']] = $customField['value'];
+                }
+            }
+
             $where = array('card_code' => $customer->getCardCode());
             $this->edit($customerArray, $where);
         }
@@ -120,4 +171,16 @@ class CustomerService extends AbstractService
         }
     }
 
+    /**
+     * @param $accountId
+     * @return mixed
+     */
+    public function getCustomFields($accountId)
+    {
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $customFields = $entityManager->getRepository('Customer\Entity\CustomField')
+            ->findBy(array('account_id' => $accountId));
+
+        return $customFields;
+    }
 }

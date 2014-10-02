@@ -81,5 +81,19 @@ return array(
             ),
         ),
     ),
+    'doctrine' => array(
+        'driver' => array(
+            'customer_entity' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => array(__DIR__ . '/../src/Customer/Entity')
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Customer\Entity' =>  'customer_entity'
+                ),
+            ),
+        ),
+    ),
 );
 

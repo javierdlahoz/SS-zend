@@ -9,13 +9,28 @@
 
 namespace Application\Controller;
 
+use User\Helper\PictureHelper;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 
 class IndexController extends AbstractActionController
 {
+    /**
+     * @return array|JsonModel
+     */
     public function indexAction()
     {
-        return new ViewModel();
+        return new JsonModel(array('message' => 'success'));
+    }
+
+    /**
+     * @return JsonModel
+     */
+    public function agencyLogoAction()
+    {
+        $accountId = $this->getRequest()->getPost()->get('agency');
+        $pictureUpload = new PictureHelper();
+        return new JsonModel(array('pictureUrl' =>
+            $pictureUpload->getPictureUrlFromAccount($accountId)));
     }
 }

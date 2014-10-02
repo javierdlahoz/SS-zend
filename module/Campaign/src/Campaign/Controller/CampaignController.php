@@ -63,6 +63,21 @@ class CampaignController extends AbstractRestfulController
     /**
      * @return JsonModel
      */
+    public function multipliersAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user))
+        {
+            $campaignId = $this->getRequest()->getPost()->get('campaignId');
+            $promotions = $this->getServiceLocator()->get('campaignService')->getMultipliers($campaignId);
+
+            return new JsonModel(PromotionFacade::formatPromotionCollection($promotions));
+        }
+    }
+
+    /**
+     * @return JsonModel
+     */
     public function balanceAction()
     {
         $user = $this->zfcUserAuthentication()->getIdentity();

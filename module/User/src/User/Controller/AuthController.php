@@ -38,5 +38,4 @@ class AuthController extends AbstractRestfulController
 
         return new JsonModel(array("message" => "Logout completed."));
 	}
-
 }

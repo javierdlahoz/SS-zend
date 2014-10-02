@@ -15,6 +15,7 @@ use Customer\Facade\CustomerFacade;
 use Application\Helper\RequestHelper;
 use Customer\Facade\BalanceFacade;
 use Customer\Entity\Customer;
+use Customer\Facade\CustomFieldFacade;
 
 class CustomerController extends AbstractRestfulController
 {
@@ -146,11 +147,28 @@ class CustomerController extends AbstractRestfulController
         if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
         {
             $customer = new Customer();
-            $customer->fillFromPost($this->getRequest()->getPost());
+            $customFields = $this->getServiceLocator()->get('customerService')->getCustomFields($user->getAccount());
+
+            $customer->fillFromPost($this->getRequest()->getPost(), $customFields);
+
             $customerService = $this->getServiceLocator()->get('customerService');
             $customerService->editCustomer($customer, $user->getAccount());
 
             return new JsonModel(array('message' => "Customer updated successfully"));
+        }
+    }
+
+    /**
+     * @return JsonModel
+     * @throws \Exception
+     */
+    public function customFieldsAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user))
+        {
+            $customFields = $this->getServiceLocator()->get('customerService')->getCustomFields($user->getAccount());
+            return new JsonModel(CustomFieldFacade::formatCustomFieldCollection($customFields));
         }
     }
 }

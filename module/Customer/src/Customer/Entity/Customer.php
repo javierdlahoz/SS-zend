@@ -8,10 +8,11 @@
 
 namespace Customer\Entity;
 
+use Customer\Facade\CustomFieldFacade;
 
 class Customer{
 
-    function __construct($SQLData = null)
+    function __construct($SQLData = null, $customFields = null)
     {
         if($SQLData != null)
         {
@@ -24,6 +25,14 @@ class Customer{
                 {
                     //nothing here
                 }
+            }
+            $this->custom_fields = array();
+            $count = 0;
+            foreach($customFields as $customField)
+            {
+                $this->custom_fields[$count] = CustomFieldFacade::formatCustomField($customField);
+                $this->custom_fields[$count]["value"] = $SQLData[$customField->getFieldName()];
+                $count++;
             }
         }
     }
@@ -69,6 +78,24 @@ class Customer{
     private $customer_username;
 
     private $customer_PIN;
+
+    private $custom_fields;
+
+    /**
+     * @return mixed
+     */
+    public function getCustomFields()
+    {
+        return $this->custom_fields;
+    }
+
+    /**
+     * @param mixed $customFields
+     */
+    public function setCustomFields($customFields)
+    {
+        $this->custom_fields = $customFields;
+    }
 
     /**
      * @param mixed $account_id
@@ -409,7 +436,7 @@ class Customer{
     /**
      * @param $post
      */
-    public function fillFromPost($post)
+    public function fillFromPost($post, $customFields = null)
     {
         if($post->get('firstName') != null){
             $this->first_name = $post->get('firstName');
@@ -457,6 +484,25 @@ class Customer{
 
         if($post->get('country') != null){
             $this->country = $post->get('country');
+        }
+
+        if($customFields != null)
+        {
+            $count = 0;
+            $this->custom_fields = array();
+            foreach($customFields as $customField)
+            {
+                $this->custom_fields[$count] = CustomFieldFacade::formatCustomField($customField);
+                if($post->get($customField->getFieldName()) != null)
+                {
+                    $this->custom_fields[$count]["value"] = $post->get($customField->getFieldName());
+                }
+                else
+                {
+                    $this->custom_fields[$count]["value"] = null;
+                }
+                $count++;
+            }
         }
     }
 

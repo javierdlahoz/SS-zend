@@ -142,7 +142,21 @@ class CampaignService extends AbstractService
     public function getPromotions($campaignId)
     {
         $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        $promotions = $entityManager->getRepository('Campaign\Entity\Promotion\Promotion')->findBy(array('campaign_id' => $campaignId));
+        $promotions = $entityManager->getRepository('Campaign\Entity\Promotion\Promotion')->
+            findBy(array('campaign_id' => $campaignId, 'operation' => '+'));
+
+        return $promotions;
+    }
+
+    /**
+     * @param $campaignId
+     * @return mixed
+     */
+    public function getMultipliers($campaignId)
+    {
+        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $promotions = $entityManager->getRepository('Campaign\Entity\Promotion\Promotion')->
+        findBy(array('campaign_id' => $campaignId, 'operation' => 'x'));
 
         return $promotions;
     }
