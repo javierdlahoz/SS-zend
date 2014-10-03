@@ -13,6 +13,21 @@ use Customer\Entity\CustomField;
 class CustomFieldFacade {
 
     /**
+     * @param $choices
+     * @return array
+     */
+    private function formatChoices($choices)
+    {
+        if($choices == null)
+        {
+            return null;
+        }
+
+        $choicesTmp = explode(",", $choices);
+        return $choicesTmp;
+    }
+
+    /**
      * @param CustomField $customField
      * @return array
      */
@@ -23,7 +38,7 @@ class CustomFieldFacade {
             "name" => $customField->getFieldName(),
             "label" => $customField->getFieldLabel(),
             "type" => $customField->getFieldType(),
-            "choices" => $customField->getFieldChoices(),
+            "choices" => self::formatChoices($customField->getFieldChoices()),
             "isShown" => $customField->getFieldShow()
         );
     }
