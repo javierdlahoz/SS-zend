@@ -48,6 +48,7 @@ class AbstractService
     {
         $config  = $this->getConfig();
         $this->dbSettings = $config['doctrine']['connection']['orm_default']['params'];
+        $this->dbSettings['dbname'] = $config['stickystreet']['dbname'];
     }
 
     /**

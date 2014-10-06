@@ -13,6 +13,10 @@ use Setting\Entity\CustomField;
 
 class CustomerSettingFacade
 {
+    /**
+     * @param $customerSettings
+     * @return array
+     */
     public function formatCustomerSettings($customerSettings)
     {
          foreach($customerSettings as $customerSetting)
@@ -61,5 +65,20 @@ class CustomerSettingFacade
          }
 
         return $results;
+    }
+
+    /**
+     * @param $customFields
+     * @return array
+     */
+    public function formatCustomFields($customFields)
+    {
+        $formattedCustomFields = array();
+        foreach($customFields as $customField)
+        {
+            $formattedCustomFields[$customField->getFieldName()] = $customField->getFieldLabel();
+        }
+
+        return $formattedCustomFields;
     }
 }

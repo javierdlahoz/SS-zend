@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Customer
  *
- * @ORM\Table(name="lp_customfields")
+ * @ORM\Table(name="823542_pixiedev.lp_customfields")
  * @ORM\Entity
  */
 class Customer
@@ -21,7 +21,7 @@ class Customer
     /**
      * @var integer
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Column(name="unique_id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue
      */

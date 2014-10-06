@@ -8,6 +8,7 @@
 
 return array(
   "stickystreet" => array(
-        "url" => "http://ss-dev.com/api.php"
-  )
+        "url" => "http://ss-dev.com/api.php",
+        "dbname" => "stickystreet"
+     )
 );

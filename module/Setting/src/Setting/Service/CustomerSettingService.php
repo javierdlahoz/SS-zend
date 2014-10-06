@@ -10,12 +10,16 @@ namespace Setting\Service;
 
 use Application\Service\DoctrineService;
 use Setting\Entity\Customer;
+use Setting\Facade\CustomerSettingFacade;
 
 class CustomerSettingService extends DoctrineService
 {
     const ENTITY_NAME = 'Setting\Entity\Customer';
     const ENTITY_CUSTOM_FIELDS = 'Setting\Entity\CustomField';
 
+    /**
+     * @throws \Exception
+     */
     public function init()
     {
         $entityManager = $this->getEntityManager();
@@ -28,6 +32,10 @@ class CustomerSettingService extends DoctrineService
         }
     }
 
+    /**
+     * @param $accountId
+     * @return mixed
+     */
     private function getCustomFields($accountId)
     {
         $customFieldEntity =  $this->getEntityManager()->getRepository(self::ENTITY_CUSTOM_FIELDS);
@@ -36,6 +44,9 @@ class CustomerSettingService extends DoctrineService
         return $customFields;
     }
 
+    /**
+     * @return array
+     */
     private function getAllFields()
     {
         return array(
@@ -54,14 +65,23 @@ class CustomerSettingService extends DoctrineService
         );
     }
 
+    /**
+     * @param $accountId
+     * @return mixed
+     */
     public function getByAccountId($accountId)
     {
         return $this->getEntity()->findBy(array('account_id' => $accountId));
     }
 
+    /**
+     * @param $accountId
+     */
     public function createByAccountId($accountId)
     {
         $customerFields = $this->getAllFields();
+        $customerFields = array_merge($customerFields,
+            CustomerSettingFacade::formatCustomFields($this->getCustomFields($accountId)));
 
         foreach($customerFields as $key => $value)
         {
@@ -96,6 +116,12 @@ class CustomerSettingService extends DoctrineService
 
     }
 
+    /**
+     * @param $accountId
+     * @param $post
+     * @return bool
+     * @throws \Exception
+     */
     public function editByAccountId($accountId, $post)
     {
         $customerSettings = $this->getByAccountId($accountId);
