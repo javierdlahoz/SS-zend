@@ -24,7 +24,10 @@ return array(
                 },
             'customerSettingService' => function ($serviceManager){
                     return new Service\CustomerSettingService($serviceManager);
-                }
+                },
+            'campaignSettingsService' => function ($serviceManager){
+                    return new Service\CampaignSettingsService($serviceManager);
+            }
         )
     ),
 

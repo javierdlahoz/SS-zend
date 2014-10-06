@@ -25,7 +25,7 @@ class SettingFacade
             'allow_new_phone' => $settings->getAllowNewPhone(),
             'allow_new_email' => $settings->getAllowNewEmail(),
             'allow_new_address' => $settings->getAllowNewAddress(),
-            'allow_new_custom' => $settings->getAllowNewCustom(),
+            'allow_new_custom' => $settings->getAllowNewCustom(),/*
             'allow_add' => $settings->getAllowAdd(),
             'allow_redeem_points' => $settings->getAllowRedeemPoints(),
             'ask_for_amount' => $settings->getAskForAmount(),
@@ -52,7 +52,7 @@ class SettingFacade
             'bx_ask_for_email_receipt' => $settings->getBxAskForEmailReceipt(),
             'bx_show_transaction' => $settings->getBxShowTransaction(),
             'bx_ask_for_description' => $settings->getBxAskForDescription(),
-            'bx_ask_for_amount' => $settings->getBxAskForAmount(),
+            'bx_ask_for_amount' => $settings->getBxAskForAmount(),*/
             'scanning_method' => $settings->getScanningMethod(),
             'alert_preferences' => $settings->getAlertPreferences()
         );

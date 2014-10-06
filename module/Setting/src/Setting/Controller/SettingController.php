@@ -8,11 +8,14 @@
 
 namespace Setting\Controller;
 
+use Zend\Json\Json;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Setting\Facade\SettingFacade;
 use Setting\Facade\CustomerSettingFacade;
 use Application\Helper\RequestHelper;
+use Setting\Facade\CampaignSettingsFacade;
+use User\Helper\UserHelper;
 
 class SettingController extends AbstractRestfulController
 {
@@ -85,6 +88,9 @@ class SettingController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function setLogoAction()
     {
         if(RequestHelper::isPost($this->getRequest()))
@@ -95,5 +101,34 @@ class SettingController extends AbstractRestfulController
             var_dump($files);
             die();
         }
+    }
+
+    /**
+     * @return JsonModel
+     */
+    public function loadCampaignSettingsAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user))
+        {
+            $campaignSettings = $this->getServiceLocator()->get('campaignSettingsService')->getSettingsByCampaign($user->getAccount());
+            return new JsonModel(CampaignSettingsFacade::formatCampaignSettingsCollection($campaignSettings));
+        }
+    }
+
+    /**
+     * @return JsonModel
+     * @throws \Exception
+     */
+    public function updateCampaignSettingsAction()
+    {
+        //$user = $this->zfcUserAuthentication()->getIdentity();
+        //if(UserHelper::isMerchant($user))
+        //{
+            $campaignSettings = json_decode($this->getRequest()->getContent());
+            $this->getServiceLocator()->get('campaignSettingsService')->saveCampaignSettings($campaignSettings);
+
+            return new JsonModel(array('message' => "Settings updated successfully"));
+        //}
     }
 }
