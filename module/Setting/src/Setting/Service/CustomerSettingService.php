@@ -80,8 +80,9 @@ class CustomerSettingService extends DoctrineService
     public function createByAccountId($accountId)
     {
         $customerFields = $this->getAllFields();
-        $customerFields = array_merge($customerFields,
+        /*$customerFields = array_merge($customerFields,
             CustomerSettingFacade::formatCustomFields($this->getCustomFields($accountId)));
+        */
 
         foreach($customerFields as $key => $value)
         {
