@@ -155,7 +155,7 @@ abstract class StickyStreetAdapter {
      * @param $campaignId
      * @param null $authorization
      */
-    protected function prepareParams($customerCode, $campaignId, $authorization = null)
+    protected function prepareParams($customerCode = null, $campaignId = null, $authorization = null)
     {
         $apiCredentials = $this->getServiceLocator()->get('userHelper')->getApiCredentials($this->user);
 

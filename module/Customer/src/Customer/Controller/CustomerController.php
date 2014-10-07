@@ -110,7 +110,7 @@ class CustomerController extends AbstractRestfulController
         $user = $this->zfcUserAuthentication()->getIdentity();
         if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
         {
-            $this->getServiceLocator()->get('customerService')->add($this->getRequest()->getPost(), $user->getAccount());
+            $this->getServiceLocator()->get('customerService')->add($this->getRequest()->getPost(), $user);
             return new JsonModel(array('message' => "Customer added succesfully"));
         }
     }

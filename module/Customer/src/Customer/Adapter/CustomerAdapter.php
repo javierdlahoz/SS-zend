@@ -13,6 +13,8 @@ use Application\Adapter\StickyStreetAdapter;
 class CustomerAdapter extends StickyStreetAdapter
 {
     const BALANCE = "customer_balance";
+    const ADD_CUSTOMER_TYPE = "record_customer";
+    const ADD_CUSTOMER_ACTION = "new";
 
     /**
      * @param $customerCode
@@ -26,5 +28,29 @@ class CustomerAdapter extends StickyStreetAdapter
 
         return $this->sendRequest(null, true);
 
+    }
+
+    /**
+     * @param array|Customer $customer
+     *
+     * @throws \Exception
+     * @return bool
+     */
+    public function add(array $customer)
+    {
+        $this->prepareParams();
+        unset($this->params['code']);
+        unset($this->params['campaign_id']);
+        unset($this->params['authorization']);
+
+        $this->params['type'] = self::ADD_CUSTOMER_TYPE;
+        $this->params['action'] = self::ADD_CUSTOMER_ACTION;
+
+        foreach($customer as $key => $value)
+        {
+            $this->params[$key] = $value;
+        }
+
+        return $this->sendRequest($this->params, true);
     }
 } 

@@ -167,6 +167,7 @@ class AbstractService
 
         $this->connect();
         $result = mysqli_query($this->connection, $query);
+        $error = mysqli_error($this->connection);
         $this->disconnect();
 
         if($result)
@@ -175,7 +176,7 @@ class AbstractService
         }
         else
         {
-            throw new \Exception(mysqli_error($this->connection));
+            throw new \Exception($error);
         }
     }
 
@@ -311,8 +312,8 @@ class AbstractService
                 $values .= ", '{$value}'";
             }
         }
-
         $query .= "(".$fields.") VALUES (".$values.")";
+
         try
         {
             $this->executeQuery($query);

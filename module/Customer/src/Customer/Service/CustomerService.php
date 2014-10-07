@@ -11,6 +11,7 @@ namespace Customer\Service;
 use Application\Service\AbstractService;
 use Customer\Entity\Customer;
 
+
 class CustomerService extends AbstractService
 {
     const FIELDS = "first_name, last_name, email, card_number";
@@ -102,16 +103,15 @@ class CustomerService extends AbstractService
      * @param $accountId
      * @throws \Exception
      */
-    public function add($post, $accountId)
+    public function add($post, $user)
     {
-        $this->setEntity(self::PROFILE.$accountId);
+        $this->setEntity(self::PROFILE.$user->getAccount());
 
         $customerArray = array(
             "first_name" => $post->get('firstName'),
             "last_name" => $post->get('lastName'),
             "email" => $post->get('email'),
             "phone" => $post->get('phone'),
-            "card_code"  => $post->get('cardCode'),
             "card_number" => $post->get('cardNumber'),
             "city"      => $post->get('city'),
             "state"     => $post->get('state'),
@@ -120,13 +120,15 @@ class CustomerService extends AbstractService
             "address2"  => $post->get('address2')
         );
 
-        $customFields = self::getCustomFields($accountId);
+        $customFields = self::getCustomFields($user->getAccount());
         foreach($customFields as $customField)
         {
             $customerArray[$customField->getFieldName()] = $post->get($customField->getFieldName());
         }
 
-        $this->insert($customerArray);
+        $customerAdapter = $this->getServiceLocator()->get('customerAdapter');
+        $customerAdapter->setUser($user);
+        $customerAdapter->add($customerArray);
     }
 
     /**
