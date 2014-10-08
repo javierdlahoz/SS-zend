@@ -33,6 +33,7 @@ class CampaignService extends AbstractService
         $fields = "campaigns.campaign_id, campaigns.campaign_name";
         $entities = "account_campaigns INNER JOIN campaigns";
         $query = "ON account_campaigns.campaign_id = campaigns.campaign_id WHERE account_campaigns.account_id = '{$accountId}'";
+        $query .= " AND billable != 'N'";
 
         return $this->select($fields, $query, $entities);
     }
