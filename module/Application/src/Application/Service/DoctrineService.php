@@ -13,6 +13,15 @@ abstract class DoctrineService
     private $serviceLocator;
     private $entity;
 
+    /**
+     * @return mixed
+     */
+    public function getPixiepadEntityManager()
+    {
+
+        return $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+    }
+
     function __construct($serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
@@ -40,7 +49,7 @@ abstract class DoctrineService
      */
     protected function getEntityManager()
     {
-        return $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        return $this->getServiceLocator()->get('doctrine.entitymanager.orm_stickystreet');
     }
 
     /**

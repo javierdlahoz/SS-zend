@@ -142,7 +142,7 @@ class CampaignService extends AbstractService
      */
     public function getPromotions($campaignId)
     {
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $entityManager = $this->getServiceLocator()->get(self::STICKY_STREET_ENTITY_MANAGER);
         $promotions = $entityManager->getRepository('Campaign\Entity\Promotion\Promotion')->
             findBy(array('campaign_id' => $campaignId, 'operation' => '+'));
 
@@ -155,7 +155,7 @@ class CampaignService extends AbstractService
      */
     public function getMultipliers($campaignId)
     {
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $entityManager = $this->getServiceLocator()->get(self::STICKY_STREET_ENTITY_MANAGER);
         $promotions = $entityManager->getRepository('Campaign\Entity\Promotion\Promotion')->
         findBy(array('campaign_id' => $campaignId, 'operation' => 'x'));
 

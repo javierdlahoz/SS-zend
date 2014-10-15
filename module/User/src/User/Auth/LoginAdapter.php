@@ -2,6 +2,7 @@
 
 namespace User\Auth;
 
+use Application\Service\AbstractService;
 use User\Entity\User;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Stdlib\Parameters;
@@ -13,8 +14,15 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      */
     private function getEntityManager()
     {
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
-        return $entityManager;
+        return $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getEntityManagerStickyStreet()
+    {
+        return $this->getServiceLocator()->get(AbstractService::STICKY_STREET_ENTITY_MANAGER);
     }
 
     /**
@@ -56,7 +64,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         $user->setAccount($request['account']);
 
         $entityManager = $this->getEntityManager();
-        $entityManager->merge($user);
+        $entityManager->persist($user);
         $entityManager->flush();
 
         if($user)
@@ -106,13 +114,14 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         $params->set('credential', $credentials['password']);
 		$emulatedRequest = new Request();
 		$emulatedRequest->setPost($params);
-		
+
         $result = $adapter->prepareForAuthentication($emulatedRequest);
 
         if ($result instanceof Response)
         {
             return $result;
         }
+
 
         $auth = $this->getAuthPlugin()->getAuthService()->authenticate($adapter);
         if(!$auth->isValid())
@@ -121,6 +130,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
             {
                 throw new \Exception('Please, check your credentials');
             }
+
 
             $accountUser = $this->getAccountUsersByParams($params, $accountId);
             if($accountUser != null)
@@ -187,7 +197,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      */
     private function getAccountByParams($params)
     {
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->getEntityManagerStickyStreet();
         $accounts = $entityManager->getRepository('User\Entity\Account')->findBy(array('username' => $params['identity']));
 
         if(!empty($accounts))
@@ -226,7 +236,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      */
     private function getAccountUsersByParams($params, $accountId)
     {
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->getEntityManagerStickyStreet();
         $accounts = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('username' => $params['identity'], 'account_id' => $accountId));
 
         if(!empty($accounts))
@@ -270,7 +280,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         $entityManager = $this->getEntityManager();
         $users = $entityManager->getRepository('User\Entity\User')->findBy(array('username' => $credentials['username']));
 
-        if(empty($users))
+        if(count($users) == 0)
         {
             return false;
         }
@@ -296,7 +306,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      */
     private function getUserByPin($pin, $accountId)
     {
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->getEntityManagerStickyStreet();
         $users = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('user_pin' => $pin, 'account_id' => $accountId));
 
         if(empty($users))

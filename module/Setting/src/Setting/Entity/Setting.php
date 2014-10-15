@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * User
  *
- * @ORM\Table(name="823542_pixiedev.lp_settings")
+ * @ORM\Table(name="lp_settings")
  * @ORM\Entity
  */
 class Setting

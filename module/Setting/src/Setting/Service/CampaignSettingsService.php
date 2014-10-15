@@ -8,6 +8,7 @@
 
 namespace Setting\Service;
 
+use Application\Service\AbstractService;
 use Campaign\Facade\CampaignFacade;
 use Setting\Entity\UserCampaign;
 use Transaction\Facade\CustomFieldFacade;
@@ -17,6 +18,7 @@ class CampaignSettingsService {
 
     protected $serviceLocator;
     protected $entityManager;
+    protected $stickyStreetEntityManager;
     protected $options;
 
     const USER_CAMPAIGN_ENTITY = 'Setting\Entity\UserCampaign';
@@ -29,6 +31,7 @@ class CampaignSettingsService {
     {
         $this->serviceLocator = $serviceLocator;
         $this->entityManager = $this->serviceLocator->get('Doctrine\ORM\EntityManager');
+        $this->stickyStreetEntityManager = $this->serviceLocator->get(AbstractService::STICKY_STREET_ENTITY_MANAGER);
 
         $this->options = array(
             array(
@@ -154,6 +157,8 @@ class CampaignSettingsService {
         $campaings = CampaignFacade::formatCampaignList(
             $this->serviceLocator->get('campaignService')->getActiveCampaigns($accountId));
 
+
+
         foreach($campaings as $campaign)
         {
             foreach($customTransactionFields as $customTransactionField)
@@ -179,11 +184,13 @@ class CampaignSettingsService {
      */
     public function getSettingsByCampaign($accountId)
     {
+
         $this->createUserCampaign($accountId);
         $this->createCampaignSettings($accountId);
 
         $campaings = CampaignFacade::formatCampaignList(
             $this->serviceLocator->get('campaignService')->getActiveCampaigns($accountId));
+
 
         foreach($campaings as $campaign)
         {
@@ -213,7 +220,6 @@ class CampaignSettingsService {
                     $campaignSettings = $this->entityManager->getRepository(self::CAMPAIGN_SETTINGS_ENTITY)
                         ->findOneBy(array('campaign_id' => $campaign->campaignId, 'field_name' => $campaignOption->fieldName));
 
-                    //$campaignSettings = $campaignSettings[0];
                     $campaignSettings->setIsActive($campaignOption->isActive);
 
                     try{

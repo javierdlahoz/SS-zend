@@ -10,40 +10,66 @@ namespace Setting\Service;
 
 use Application\Service\DoctrineService;
 use Setting\Entity\Setting;
+use Setting\Entity\CustomLanguage;
 
 class SettingService extends DoctrineService
 {
     const ENTITY_NAME = 'Setting\Entity\Setting';
+    const CUSTOM_LANGUAGE_ENTITY = 'Setting\Entity\CustomLanguage';
+
 
     public function init()
     {
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->getPixiepadEntityManager();
         $this->setEntity($entityManager->getRepository(self::ENTITY_NAME));
     }
 
+    /**
+     * @return mixed
+     */
+    private function getCustomLanguageEntity()
+    {
+        $entityManager = $this->getPixiepadEntityManager();
+        return $entityManager->getRepository(self::CUSTOM_LANGUAGE_ENTITY);
+    }
+
+    /**
+     * @param $accountId
+     * @return mixed
+     */
     public function getByAccountId($accountId)
     {
         return $this->getEntity()->findBy(array('account_id' => $accountId));
     }
 
+    /**
+     * @param $accountId
+     */
     public function createByAccountId($accountId)
     {
         $settings = new Setting();
+
         $settings->setAccountId($accountId);
-        $this->getEntityManager()->persist($settings);
-        $this->getEntityManager()->flush();
+        $this->getPixiepadEntityManager()->persist($settings);
+        $this->getPixiepadEntityManager()->flush();
     }
 
+    /**
+     * @param $accountId
+     * @param $post
+     * @throws \Exception
+     */
     public function editByAccountId($accountId, $post)
     {
         $settings = $this->getByAccountId($accountId);
         $settings = $settings[0];
+
         if($settings instanceof Setting)
         {
             $temp =$post->get('show_logo');
             if(isset($temp))
             {
-            $settings->setShowLogo($post->get('show_logo'));
+                $settings->setShowLogo($post->get('show_logo'));
             }
 
             $temp =$post->get('currency_glyph');
@@ -293,8 +319,8 @@ class SettingService extends DoctrineService
             }
 
             try{
-                $this->getEntityManager()->merge($settings);
-                $this->getEntityManager()->flush();
+                $this->getPixiepadEntityManager()->merge($settings);
+                $this->getPixiepadEntityManager()->flush();
                 return true;
             }
             catch(\Exception $ex)
@@ -308,4 +334,62 @@ class SettingService extends DoctrineService
         }
     }
 
+    /**
+     * @param $accountId
+     * @return mixed
+     */
+    public function getCustomLanguage($accountId)
+    {
+        return $this->getCustomLanguageEntity()->findOneBy(array('account_id' => $accountId));
+    }
+
+    /**
+     * @param $accountId
+     * @return bool
+     */
+    private function existCustomLanguage($accountId)
+    {
+        $customLanguage = self::getCustomLanguage($accountId);
+        if(!empty($customLanguage))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * @param $accountId
+     * @param $customLanguage
+     * @throws \Exception
+     */
+    public function saveCustomLanguage($accountId, $customLanguage)
+    {
+        try
+        {
+            if (self::existCustomLanguage($accountId))
+            {
+                $customLanguageTemp = self::getCustomLanguage($accountId);
+
+                $customLanguageTemp->setCustomLanguage($customLanguage);
+                $this->getPixiepadEntityManager()->merge($customLanguageTemp);
+                $this->getPixiepadEntityManager()->flush();
+            }
+            else
+            {
+                $customLanguageTemp = new CustomLanguage();
+                $customLanguageTemp->setAccountId($accountId);
+                $customLanguageTemp->setCustomLanguage($customLanguage);
+
+                $this->getPixiepadEntityManager()->persist($customLanguageTemp);
+                $this->getPixiepadEntityManager()->flush();
+            }
+        }
+        catch(\Exception $ex)
+        {
+            throw new \Exception($ex->getMessage());
+        }
+    }
 }

@@ -8,8 +8,14 @@
 
 namespace Setting\Facade;
 
+use Setting\Entity\CustomLanguage;
+
 class SettingFacade
 {
+    /**
+     * @param $settings
+     * @return array
+     */
     public function formatSettings($settings)
     {
          return array(
@@ -56,5 +62,23 @@ class SettingFacade
             'scanning_method' => $settings->getScanningMethod(),
             'alert_preferences' => $settings->getAlertPreferences()
         );
+    }
+
+    /**
+     * @param $customLanguage
+     * @return array|null
+     */
+    public function formatCustomLanguage(CustomLanguage $customLanguage)
+    {
+        if(empty($customLanguage))
+        {
+            return null;
+        }
+        else
+        {
+            return array(
+                "customLanguage" => json_decode($customLanguage->getCustomLanguage())
+            );
+        }
     }
 }

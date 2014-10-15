@@ -23,6 +23,8 @@ class AbstractService
     const VISIT = "visits_";
     const LIMIT = 10;
 
+    const STICKY_STREET_ENTITY_MANAGER = "doctrine.entitymanager.orm_stickystreet";
+
     /**
      * @param $serviceLocator
      */
@@ -47,8 +49,8 @@ class AbstractService
     protected function prepareDbSettings()
     {
         $config  = $this->getConfig();
-        $this->dbSettings = $config['doctrine']['connection']['orm_default']['params'];
-        $this->dbSettings['dbname'] = $config['stickystreet']['dbname'];
+        $this->dbSettings = $config['doctrine']['connection']['orm_stickystreet']['params'];
+        $this->dbSettings['dbname'] = $config['doctrine']['connection']['orm_stickystreet']['params']['dbname'];
     }
 
     /**

@@ -11,8 +11,6 @@ namespace Customer\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Promotion
- *
  * @ORM\Table(name="custom_fields")
  * @ORM\Entity
  */

@@ -22,7 +22,7 @@ class CustomerSettingService extends DoctrineService
      */
     public function init()
     {
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->getPixiepadEntityManager();
         try{
             $this->setEntity($entityManager->getRepository(self::ENTITY_NAME));
         }
@@ -38,7 +38,7 @@ class CustomerSettingService extends DoctrineService
      */
     private function getCustomFields($accountId)
     {
-        $customFieldEntity =  $this->getEntityManager()->getRepository(self::ENTITY_CUSTOM_FIELDS);
+        $customFieldEntity =  $this->getPixiepadEntityManager()->getRepository(self::ENTITY_CUSTOM_FIELDS);
         $customFields = $customFieldEntity->findBy(array('account_id' => $accountId));
 
         return $customFields;
@@ -95,8 +95,8 @@ class CustomerSettingService extends DoctrineService
             $customerSettings->setCustomFieldShow("Y");
             $customerSettings->setIsAvailable(1);
 
-            $this->getEntityManager()->persist($customerSettings);
-            $this->getEntityManager()->flush();
+            $this->getPixiepadEntityManager()->persist($customerSettings);
+            $this->getPixiepadEntityManager()->flush();
         }
 
         $customFields = $this->getCustomFields($accountId);
@@ -111,8 +111,8 @@ class CustomerSettingService extends DoctrineService
             $customerSettings->setCustomFieldShow("Y");
             $customerSettings->setIsAvailable(1);
 
-            $this->getEntityManager()->persist($customerSettings);
-            $this->getEntityManager()->flush();
+            $this->getPixiepadEntityManager()->persist($customerSettings);
+            $this->getPixiepadEntityManager()->flush();
         }
 
     }
@@ -134,8 +134,8 @@ class CustomerSettingService extends DoctrineService
                 $customerSetting->setCustomFieldShow($fieldValue);
             }
             try{
-                $this->getEntityManager()->merge($customerSetting);
-                $this->getEntityManager()->flush();
+                $this->getPixiepadEntityManager()->merge($customerSetting);
+                $this->getPixiepadEntityManager()->flush();
             }
             catch(\Exception $ex)
             {

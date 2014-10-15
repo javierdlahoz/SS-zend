@@ -8,7 +8,7 @@ use User\Facade\ProfileFacade;
 class AbstractAdapter {
 		
 	private $serviceLocator;
-	private $document = "User\Entity\User";
+	private $document = 'User\Entity\User';
 	protected $currentUser;
 
 	public function __construct($serviceLocator) {

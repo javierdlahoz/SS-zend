@@ -2,6 +2,7 @@
 
 namespace User\Helper;
 
+use Application\Service\AbstractService;
 use User\Entity\User;
 use Zend\View\Model\JsonModel;
 
@@ -66,7 +67,7 @@ class UserHelper
 
     public function getApiCredentials($user)
     {
-        $accounts = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager')
+        $accounts = $this->getServiceLocator()->get(AbstractService::STICKY_STREET_ENTITY_MANAGER)
                         ->getRepository('User\Entity\AccountUser')->findBy(array('account_id' => $user->getAccount()));
 
         $account = $accounts[0];

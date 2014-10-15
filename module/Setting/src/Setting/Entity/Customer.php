@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Customer
  *
- * @ORM\Table(name="823542_pixiedev.lp_customfields")
+ * @ORM\Table(name="lp_customfields")
  * @ORM\Entity
  */
 class Customer

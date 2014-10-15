@@ -122,13 +122,44 @@ class SettingController extends AbstractRestfulController
      */
     public function updateCampaignSettingsAction()
     {
-        //$user = $this->zfcUserAuthentication()->getIdentity();
+        $campaignSettings = json_decode($this->getRequest()->getContent());
+        $this->getServiceLocator()->get('campaignSettingsService')->saveCampaignSettings($campaignSettings);
+
+        return new JsonModel(array('message' => "Settings updated successfully"));
+    }
+
+    /**
+     * @return array|null
+     * @throws \Exception
+     */
+    public function loadLanguageAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user))
+        {
+            $accountId = $user->getAccount();
+            $customLanguage = $this->getServiceLocator()->get('settingService')->getCustomLanguage($accountId);
+
+            return new JsonModel(SettingFacade::formatCustomLanguage($customLanguage));
+        }
+    }
+
+    /**
+     * @return JsonModel
+     * @throws \Exception
+     */
+    public function updateLanguageAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
         //if(UserHelper::isMerchant($user))
         //{
-            $campaignSettings = json_decode($this->getRequest()->getContent());
-            $this->getServiceLocator()->get('campaignSettingsService')->saveCampaignSettings($campaignSettings);
+            $accountId = $user->getAccount();
 
-            return new JsonModel(array('message' => "Settings updated successfully"));
+            $customLanguage = $this->getRequest()->getContent();
+            $this->getServiceLocator()->get('settingService')->saveCustomLanguage($accountId, $customLanguage);
+
+            return new JsonModel(array("message" => "Language updated successfully"));
         //}
     }
+
 }

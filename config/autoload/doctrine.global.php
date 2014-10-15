@@ -37,6 +37,26 @@ return array(
                     'port'     => '3306',
                     'user'     => 'root',
                     'password' => 'Test4Echo',
+                    'dbname'   => '823542_pixiedev',
+                )
+            ),
+
+            'orm_stickystreet' => array(
+                // configuration instance to use. The retrieved service name will
+                // be `doctrine.configuration.$thisSetting`
+                'configuration' => 'orm_stickystreet',
+
+                // event manager instance to use. The retrieved service name will
+                // be `doctrine.eventmanager.$thisSetting`
+                'eventmanager'  => 'orm_stickystreet',
+
+                // connection parameters, see
+                // http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
+                'params' => array(
+                    'host'     => 'localhost',
+                    'port'     => '3306',
+                    'user'     => 'root',
+                    'password' => 'Test4Echo',
                     'dbname'   => 'stickystreet',
                 )
             ),
@@ -87,6 +107,20 @@ return array(
                 'datetime_functions' => array(),
                 'string_functions' => array(),
                 'numeric_functions' => array(),
+            ),
+            'orm_stickystreet' => array(
+                'metadata_cache'    => 'array',
+                'query_cache'       => 'array',
+                'result_cache'      => 'array',
+                'hydration_cache'   => 'array',
+                'driver'            => 'orm_default',
+                'generate_proxies'  => true,
+                'proxy_dir'         => 'data/DoctrineORMModule/Proxy',
+                'proxy_namespace'   => 'DoctrineORMModule\Proxy',
+                'filters'           => array(),
+                'datetime_functions' => array(),
+                'string_functions' => array(),
+                'numeric_functions' => array(),
             )
         ),
 
@@ -115,12 +149,18 @@ return array(
                 // configuration instance to use. The retrieved service name will
                 // be `doctrine.configuration.$thisSetting`
                 'configuration' => 'orm_default'
-            )
+            ),
+
+            'orm_stickystreet' => array(
+                'connection'    => 'orm_stickystreet',
+                'configuration' => 'orm_stickystreet'
+            ),
         ),
 
         'eventmanager' => array(
             // configuration for the `doctrine.eventmanager.orm_default` service
-            'orm_default' => array()
+            'orm_default' => array(),
+            'orm_stickystreet' => array(),
         ),
 
         // SQL logger collector, used when ZendDeveloperTools and its toolbar are active

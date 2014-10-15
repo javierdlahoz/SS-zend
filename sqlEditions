@@ -22,3 +22,11 @@ ALTER TABLE `823542_pixiedev`.`lp_customfields`
 ADD COLUMN `unique_id` INT NOT NULL AUTO_INCREMENT AFTER `is_available`,
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (`unique_id`, `account_id`, `custom_field_name`);
+
+CREATE TABLE `823542_pixiedev`.`lp_customlanguage` (
+  `account_id` VARCHAR(100) NOT NULL,
+  `custom_language` TEXT NOT NULL,
+  PRIMARY KEY(`account_id`)
+)
+ENGINE = InnoDB
+CHARACTER SET utf8;

@@ -8,6 +8,7 @@
 
 namespace Application\Controller;
 
+use Application\Service\AbstractService;
 use User\Helper\PictureHelper;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
@@ -31,7 +32,7 @@ class AgencyController extends AbstractRestfulController{
     public function validateAction()
     {
         $accountId = $this->getRequest()->getPost()->get('agencyToken');
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $entityManager = $this->getServiceLocator()->get(AbstractService::STICKY_STREET_ENTITY_MANAGER);
         $accounts = $entityManager->getRepository('User\Entity\Account')->findBy(array('username' => $accountId));
 
         if(count($accounts) > 0)

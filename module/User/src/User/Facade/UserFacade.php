@@ -13,7 +13,6 @@ class UserFacade
         return array(
         		'username' => $user->getUsername(),
 	        	'type' => $user->getType(),
-                //'email' => $user->getEmail()
                 'account' => $user->getAccount(),
                 'name' => $user->getName()
         	);

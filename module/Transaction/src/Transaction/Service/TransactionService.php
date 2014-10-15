@@ -199,7 +199,7 @@ class TransactionService extends AbstractService
      */
     public function getCustomFields($accountId)
     {
-        $entityManager = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
+        $entityManager = $this->getServiceLocator()->get(self::STICKY_STREET_ENTITY_MANAGER);
         $customFields = $entityManager->getRepository('Transaction\Entity\Field\CustomField')->findBy(array('account_id' => $accountId, 'is_shown' => "Y"));
 
         return $customFields;

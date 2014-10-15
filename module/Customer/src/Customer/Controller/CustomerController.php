@@ -128,9 +128,11 @@ class CustomerController extends AbstractRestfulController
                 $this->getServiceLocator()->get('campaignService')->getActiveCampaigns($user->getAccount()));
 
             $customerAdapter = $this->getServiceLocator()->get('customerAdapter');
+
             $customerAdapter->setUser($user);
             foreach($campaigns as $campaign)
             {
+
                 $balances[] = $customerAdapter->getBalance($customerCode, $campaign['id']);
             }
 
