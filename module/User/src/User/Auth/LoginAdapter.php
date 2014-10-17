@@ -6,6 +6,7 @@ use Application\Service\AbstractService;
 use User\Entity\User;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Stdlib\Parameters;
+use User\Entity\AccountUser;
 
 class LoginAdapter extends AbstractAdapter implements IAdapter
 {
@@ -101,9 +102,8 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
                 'password' => $user->getPassword()
             );
         }
-        else
-        {
-            $credentials =  array(
+        else {
+            $credentials = array(
                 'username' => $request->get('username'),
                 'password' => $request->get('password')
             );
@@ -126,22 +126,23 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         $auth = $this->getAuthPlugin()->getAuthService()->authenticate($adapter);
         if(!$auth->isValid())
         {
-            if($this->isRegistered($credentials))
-            {
-                throw new \Exception('Please, check your credentials');
-            }
+            $isRegistered = $this->isRegistered($credentials);
 
-
-            $accountUser = $this->getAccountUsersByParams($params, $accountId);
-            if($accountUser != null)
+            $accountUser = $this->getAccountUsersByParams($params);
+            if($accountUser != null && !$isRegistered)
             {
                 return $this->createUserFromAccountUsers($accountUser);
             }
 
             $account = $this->getAccountByParams($params);
-            if($account != null)
+            if($account != null && !$isRegistered)
             {
                 return $this->createUserFromAccount($account);
+            }
+
+            if($accountUser != null && $isRegistered)
+            {
+                return $this->updateUser($accountUser);
             }
 
         	$result = $auth->getMessages();
@@ -158,37 +159,6 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 		return $user;
 	}
 
-    /**
-     * @param $request
-     * @param $user
-     * @return bool
-     * @throws \Exception
-     */
-    public function changePassword($request, $user)
-    {
-        $form = $this->getChangePasswordForm();
-        $prg = array(
-            "identity" => $user->getEmail(),
-            "credential" => $request->get('currentPassword'),
-            "newCredential" => $request->get('newPassword'),
-            "newCredentialVerify" => $request->get('newPasswordVerify'),
-            "submit" => "Submit"
-            );
-
-        $form->setData($prg);
-
-        if (!$form->isValid()) {
-        	$errors = $form->getMessages();
-            throw new \Exception("Check the fields");
-        }
-
-        $zfcUserService = $this->getServiceLocator()->get('zfcuser_user_service');
-        if (!$zfcUserService->changePassword($form->getData())) {
-            $errors = $form->getMessages();
-            throw new \Exception("Current password doesn't match");
-        }
-        return true;
-	}
 
     /**
      * @param $params
@@ -211,6 +181,30 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
     }
 
     /**
+     * @param AccountUser $user
+     * @return User
+     * @throws \Exception
+     */
+    private function updateUser(AccountUser $user)
+    {
+        $entityManager = $this->getEntityManager();
+        $userApp = $entityManager->getRepository('User\Entity\User')->findOneBy(array('username' => $user->getUsername()));
+        $entityManager->remove($userApp);
+        $entityManager->flush($userApp);
+
+        $request = array(
+            'username' => $user->getUsername(),
+            'password' => $user->getPassword(),
+            'type' => $user->getRole(),
+            'name' => $user->getFirstname()." ".$user->getLastname(),
+            'account' => $user->getAccountId()
+        );
+
+        return $this->signup($request);
+
+    }
+
+    /**
      * @param $account
      * @throws \Exception
      * @return User
@@ -220,7 +214,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         $request = array(
             'username' => $account->getUsername(),
             'password' => $account->getPassword(),
-            'type' => "account",
+            'type' => "A",
             'name' => $account->getName(),
             'account' => $account->getAccountId()
         );
@@ -230,14 +224,14 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 
     /**
      * @param $params
-     * @param $accountId
      * @throws \Exception
+     * @internal param $accountId
      * @return null
      */
-    private function getAccountUsersByParams($params, $accountId)
+    private function getAccountUsersByParams($params)
     {
         $entityManager = $this->getEntityManagerStickyStreet();
-        $accounts = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('username' => $params['identity'], 'account_id' => $accountId));
+        $accounts = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('username' => $params['identity']));
 
         if(!empty($accounts))
         {
@@ -257,12 +251,12 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      * @throws \Exception
      * @return User
      */
-    private function createUserFromAccountUsers($account)
+    private function createUserFromAccountUsers(AccountUser $account)
     {
         $request = array(
             'username' => $account->getUsername(),
             'password' => $account->getPassword(),
-            'type' => "account",
+            'type' => $account->getRole(),
             'name' => $account->getFirstname()." ".$account->getLastname(),
             'account' => $account->getAccountId()
         );

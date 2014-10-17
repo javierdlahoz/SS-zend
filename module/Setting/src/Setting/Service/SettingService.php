@@ -144,178 +144,40 @@ class SettingService extends DoctrineService
                 $settings->setAllowNewCustom($post->get('allow_new_custom'));
             }
 
-            $temp =$post->get('allow_add');
-            if(isset($temp))
-            {
-                $settings->setAllowAdd($post->get('allow_add'));
-            }
-
-            $temp =$post->get('allow_redeem_points');
-            if(isset($temp))
-            {
-                $settings->setAllowRedeemPoints($post->get('allow_redeem_points'));
-            }
-
-            $temp =$post->get('ask_for_amount');
-            if(isset($temp))
-            {
-                $settings->setAskForAmount($post->get('ask_for_amount'));
-            }
-
-            $temp =$post->get('ask_for_points');
-            if(isset($temp))
-            {
-                $settings->setAskForPoints($post->get('ask_for_points'));
-            }
-
-            $temp =$post->get('ask_for_description');
-            if(isset($temp))
-            {
-                $settings->setAskForDescription($post->get('ask_for_description'));
-            }
-
-            $temp =$post->get('ask_for_redeem_amount');
-            if(isset($temp))
-            {
-                $settings->setAskForRedeemAmount($post->get('ask_for_redeem_amount'));
-            }
-
-            $temp =$post->get('ask_for_email_receipt');
-            if(isset($temp))
-            {
-                $settings->setAskForEmailReceipt($post->get('ask_for_email_receipt'));
-            }
-
-            $temp =$post->get('show_rewards_not_earned');
-            if(isset($temp))
-            {
-                $settings->setShowRewardsNotEarned($post->get('show_rewards_not_earned'));
-            }
-
-            $temp =$post->get('show_transaction');
-            if(isset($temp))
-            {
-                $settings->setShowTransaction($post->get('show_transaction'));
-            }
-
-            $temp =$post->get('gc_allow_add');
-            if(isset($temp))
-            {
-                $settings->setGcAllowAdd($post->get('gc_allow_add'));
-            }
-
-            $temp =$post->get('gc_allow_redeem_points');
-            if(isset($temp))
-            {
-                $settings->setGcAllowRedeemPoints($post->get('gc_allow_redeem_points'));
-            }
-
-            $temp =$post->get('gc_ask_for_redeem_amount');
-            if(isset($temp))
-            {
-                $settings->setGcAskForRedeemAmount($post->get('gc_ask_for_redeem_amount'));
-            }
-
-            $temp =$post->get('gc_ask_for_email_receipt');
-            if(isset($temp))
-            {
-                $settings->setGcAskForEmailReceipt($post->get('gc_ask_for_email_receipt'));
-            }
-
-            $temp =$post->get('gc_show_transaction');
-            if(isset($temp))
-            {
-                $settings->setGcShowTransaction($post->get('gc_show_transaction'));
-            }
-
-            $temp =$post->get('gc_ask_for_amount');
-            if(isset($temp))
-            {
-                $settings->setGcAskForAmount($post->get('gc_ask_for_amount'));
-            }
-
-            $temp =$post->get('ec_allow_add');
-            if(isset($temp))
-            {
-                $settings->setEcAllowAdd($post->get('ec_allow_add'));
-            }
-
-            $temp =$post->get('ec_allow_redeem_points');
-            if(isset($temp))
-            {
-                $settings->setEcAllowRedeemPoints($post->get('ec_allow_redeem_points'));
-            }
-
-            $temp =$post->get('ec_ask_for_email_receipt');
-            if(isset($temp))
-            {
-                $settings->setEcAskForEmailReceipt($post->get('ec_ask_for_email_receipt'));
-            }
-
-            $temp =$post->get('ec_show_transaction');
-            if(isset($temp))
-            {
-                $settings->setEcShowTransaction($post->get('ec_show_transaction'));
-            }
-
-            $temp =$post->get('ec_ask_for_description');
-            if(isset($temp))
-            {
-                $settings->setEcAskForDescription($post->get('ec_ask_for_description'));
-            }
-
-            $temp =$post->get('ec_ask_for_amount');
-            if(isset($temp))
-            {
-                $settings->setEcAskForAmount($post->get('ec_ask_for_amount'));
-            }
-
-            $temp =$post->get('bx_allow_add');
-            if(isset($temp))
-            {
-                $settings->setBxAllowAdd($post->get('bx_allow_add'));
-            }
-
-            $temp =$post->get('bx_allow_redeem_points');
-            if(isset($temp))
-            {
-                $settings->setBxAllowRedeemPoints($post->get('bx_allow_redeem_points'));
-            }
-
-            $temp =$post->get('bx_ask_for_email_receipt');
-            if(isset($temp))
-            {
-                $settings->setBxAskForEmailReceipt($post->get('bx_ask_for_email_receipt'));
-            }
-
-            $temp =$post->get('bx_show_transaction');
-            if(isset($temp))
-            {
-                $settings->setBxShowTransaction($post->get('bx_show_transaction'));
-            }
-
-            $temp =$post->get('bx_ask_for_description');
-            if(isset($temp))
-            {
-                $settings->setBxAskForDescription($post->get('bx_ask_for_description'));
-            }
-
-            $temp =$post->get('bx_ask_for_amount');
-            if(isset($temp))
-            {
-                $settings->setBxAskForAmount($post->get('bx_ask_for_amount'));
-            }
-
             $temp =$post->get('scanning_method');
             if(isset($temp))
             {
                 $settings->setScanningMethod($post->get('scanning_method'));
             }
 
-            $temp =$post->get('alert_preferences');
+            $temp = $post->get('alert_preferences');
             if(isset($temp))
             {
                 $settings->setAlertPreferences($post->get('alert_preferences'));
+            }
+
+            $temp = $post->get('allow_text_message_on_add');
+            if(isset($temp))
+            {
+                $settings->setAllowTextMessageOnAdd($post->get('allow_text_message_on_add'));
+            }
+
+            $temp = $post->get('allow_text_message_on_redeem');
+            if(isset($temp))
+            {
+                $settings->setAllowTextMessageOnRedeem($post->get('allow_text_message_on_redeem'));
+            }
+
+            $temp = $post->get('text_message_on_add');
+            if(isset($temp))
+            {
+                $settings->setTextMessageOnAdd($post->get('text_message_on_add'));
+            }
+
+            $temp = $post->get('text_message_on_redeem');
+            if(isset($temp))
+            {
+                $settings->setTextMessageOnRedeem($post->get('text_message_on_redeem'));
             }
 
             try{

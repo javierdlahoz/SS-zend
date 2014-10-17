@@ -8,7 +8,8 @@ use Zend\View\Model\JsonModel;
 
 class UserHelper
 {
-    const ACCOUNT = "account";
+    const ADMIN = "A";
+    const MANAGER = "M";
 
     private $serviceLocator;
 
@@ -55,7 +56,23 @@ class UserHelper
      */
     public function isMerchant($user)
     {
-        if(($user instanceof User) && ($user->getType() == self::ACCOUNT) && ($user != null))
+        if(($user instanceof User) && ($user != null))
+        {
+            return true;
+        }
+        else
+        {
+            throw new \Exception("You don't have permission to access this functionality");
+        }
+    }
+
+    /**
+     * @param $user
+     * @throws \Exception
+     */
+    public function isAdminOrManager($user)
+    {
+        if(($user instanceof User) && ($user->getType() == self::ADMIN || $user->getType() == self::MANAGER) && ($user != null))
         {
             return true;
         }
@@ -68,7 +85,7 @@ class UserHelper
     public function getApiCredentials($user)
     {
         $accounts = $this->getServiceLocator()->get(AbstractService::STICKY_STREET_ENTITY_MANAGER)
-                        ->getRepository('User\Entity\AccountUser')->findBy(array('account_id' => $user->getAccount()));
+                        ->getRepository('User\Entity\Account')->findBy(array('username' => $user->getAccount()));
 
         $account = $accounts[0];
         return array(

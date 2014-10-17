@@ -282,7 +282,122 @@ class Setting
      * @ORM\Column(name="alert_preferences", type="string", nullable=true)
      * @var string
      */
-    private $alert_preferences = "email";
+    private $alert_preferences = "alert";
+
+    /**
+     * @ORM\Column(name="allow_text_message_on_add", type="integer", nullable=true)
+     * @var integer
+     */
+    private $allow_text_message_on_add;
+
+    /**
+     * @ORM\Column(name="allow_text_message_on_redeem", type="integer", nullable=true)
+     * @var integer
+     */
+    private $allow_text_message_on_redeem;
+
+    /**
+     * @ORM\Column(name="text_message_on_add", type="string", nullable=true)
+     * @var string
+     */
+    private $text_message_on_add;
+
+    /**
+     * @ORM\Column(name="text_message_on_redeem", type="string", nullable=true)
+     * @var string
+     */
+    private $text_message_on_redeem;
+
+    /**
+     * @return int
+     */
+    public function getAllowTextMessageOnAdd()
+    {
+        if($this->allow_text_message_on_add)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /**
+     * @param int $allow_text_message_on_add
+     */
+    public function setAllowTextMessageOnAdd($allow_text_message_on_add)
+    {
+        if($allow_text_message_on_add == true)
+        {
+            $this->allow_text_message_on_add = 1;
+        }
+        else
+        {
+            $this->allow_text_message_on_add = 0;
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getAllowTextMessageOnRedeem()
+    {
+        if($this->allow_text_message_on_redeem)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /**
+     * @param int $allow_text_message_on_redeem
+     */
+    public function setAllowTextMessageOnRedeem($allow_text_message_on_redeem)
+    {
+        if($allow_text_message_on_redeem == true)
+        {
+            $this->allow_text_message_on_redeem = 1;
+        }
+        else
+        {
+            $this->allow_text_message_on_redeem = 0;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getTextMessageOnAdd()
+    {
+        return $this->text_message_on_add;
+    }
+
+    /**
+     * @param string $text_message_on_add
+     */
+    public function setTextMessageOnAdd($text_message_on_add)
+    {
+        $this->text_message_on_add = $text_message_on_add;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTextMessageOnRedeem()
+    {
+        return $this->text_message_on_redeem;
+    }
+
+    /**
+     * @param string $text_message_on_redeem
+     */
+    public function setTextMessageOnRedeem($text_message_on_redeem)
+    {
+        $this->text_message_on_redeem = $text_message_on_redeem;
+    }
+
 
     /**
      * @param mixed $account_id

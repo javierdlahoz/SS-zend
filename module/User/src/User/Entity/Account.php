@@ -123,4 +123,12 @@ class Account
     {
         return $this->username;
     }
+
+    /**
+     * @return string
+     */
+    public function getApiToken()
+    {
+        return sha1($this->getPassword());
+    }
 }

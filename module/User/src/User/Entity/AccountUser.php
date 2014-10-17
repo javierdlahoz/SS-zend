@@ -219,12 +219,4 @@ class AccountUser
         return $this->user_pin;
     }
 
-    /**
-     * @return string
-     */
-    public function getApiToken()
-    {
-        return sha1($this->getPassword());
-    }
-
 }

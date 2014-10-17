@@ -160,7 +160,7 @@ abstract class StickyStreetAdapter {
         $apiCredentials = $this->getServiceLocator()->get('userHelper')->getApiCredentials($this->user);
 
         $this->setParams(array(
-            'user_id' => $this->user->getUsername(),
+            'user_id' => $apiCredentials['accountId'],
             'user_password' => $apiCredentials['token'],
             'account_id' => $apiCredentials['accountId'],
             'code' => $customerCode,

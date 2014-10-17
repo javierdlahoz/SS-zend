@@ -30,3 +30,9 @@ CREATE TABLE `823542_pixiedev`.`lp_customlanguage` (
 )
 ENGINE = InnoDB
 CHARACTER SET utf8;
+
+ALTER TABLE `823542_pixiedev`.`lp_settings`
+ADD COLUMN `allow_text_message_on_add` TINYINT(1) NULL DEFAULT 0 AFTER `alert_preferences`,
+ADD COLUMN `allow_text_message_on_redeem` TINYINT(1) NULL DEFAULT 0 AFTER `allow_text_message_on_add`,
+ADD COLUMN `text_message_on_add` TEXT NULL AFTER `allow_text_message_on_redeem`,
+ADD COLUMN `text_message_on_redeem` TEXT NULL AFTER `text_message_on_add`;
