@@ -56,6 +56,17 @@ class SettingService extends DoctrineService
 
     /**
      * @param $accountId
+     */
+    public function deleteByAccountId($accountId)
+    {
+        $settings = $this->getEntity()->findOneBy(array('account_id' => $accountId));
+
+        $this->getPixiepadEntityManager()->remove($settings);
+        $this->getPixiepadEntityManager()->flush();
+    }
+
+    /**
+     * @param $accountId
      * @param $post
      * @throws \Exception
      */
@@ -203,6 +214,20 @@ class SettingService extends DoctrineService
     public function getCustomLanguage($accountId)
     {
         return $this->getCustomLanguageEntity()->findOneBy(array('account_id' => $accountId));
+    }
+
+    /**
+     * @param $accountId
+     */
+    public function deleteCustomLanguage($accountId)
+    {
+        $customLanguage = $this->getCustomLanguageEntity()->findOneBy(array('account_id' => $accountId));
+
+        if(!empty($customLanguage))
+        {
+            $this->getPixiepadEntityManager()->remove($customLanguage);
+            $this->getPixiepadEntityManager()->flush();
+        }
     }
 
     /**
