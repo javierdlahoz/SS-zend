@@ -23,7 +23,7 @@ return array(
                     return new Service\SettingService($serviceManager);
                 },
             'customerSettingService' => function ($serviceManager){
-                    return new Service\CustomerSettingService($serviceManager);
+                    return new Service\CustomerSettingsService($serviceManager);
                 },
             'campaignSettingsService' => function ($serviceManager){
                     return new Service\CampaignSettingsService($serviceManager);

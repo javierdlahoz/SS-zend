@@ -31,7 +31,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      * @return User
      * @throws \Exception
      */
-    public function signup($request)
+    private function signup($request)
     {
         $serviceZfc = $this->getServiceLocator()->get('zfcuser_user_service');
 

@@ -10,10 +10,13 @@ class TransactionAdapter extends StickyStreetAdapter
 {
     const REDEEM = "redeem";
     const RECORD = "record_activity";
+    const BATCH_TRANSACTIONS = "batch_transactions";
+    const DELIMITER = "tab";
+    const APPLY_RATIO = "no";
 
     /**
-     * @param $accountId
      * @param $post
+     * @internal param $accountId
      */
     public function addCustomFieldsToParams($post)
     {
@@ -192,6 +195,42 @@ class TransactionAdapter extends StickyStreetAdapter
         {
             $this->params['buyx_quantity'] = $amount;
         }
+
+        return $this->sendRequest();
+    }
+
+    /**
+     * @param $amount
+     * @param $campaignId
+     * @param $customerCode
+     * @param null $authorization
+     * @param $promoId
+     * @return bool
+     * @throws \Exception
+     */
+    public function manuallyAddPoint($customerCode, $campaignId, $amount, $authorization = null, $promoId)
+    {
+        $this->prepareParams($customerCode, $campaignId, $authorization);
+        $this->params['user_api_key'] = $this->params['user_password'];
+        $this->params['API'] = self::API_VERSION;
+        $this->params['type'] = self::BATCH_TRANSACTIONS;
+        $this->params['delimiter'] = self::DELIMITER;
+        $this->params['apply_ratio'] = self::APPLY_RATIO;
+
+        if($authorization == null){
+            $authorization = "none";
+        }
+
+        if($promoId != null){
+            $promoId = "|".$promoId;
+        }
+
+        unset($this->params['user_password']);
+
+        $this->params['Visits_Data'] = "{$campaignId}|{$customerCode}|N|{$amount}|none|{$authorization}{$promoId}";
+
+        var_dump($this->params);
+        die();
 
         return $this->sendRequest();
     }

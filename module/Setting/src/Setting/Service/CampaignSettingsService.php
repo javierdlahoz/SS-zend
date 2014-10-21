@@ -237,4 +237,26 @@ class CampaignSettingsService {
         }
     }
 
+    /**
+     * @param $accountId
+     */
+    public function deleteCampaignSettings($accountId)
+    {
+
+        $campaigns = CampaignFacade::formatCampaignList(
+            $this->serviceLocator->get('campaignService')->getActiveCampaigns($accountId));
+
+        foreach($campaigns as $campaign)
+        {
+            $customCampaignSettings = $this->entityManager->getRepository(self::CAMPAIGN_SETTINGS_ENTITY)
+                    ->findOneBy(array('campaign_id' => $campaign['id']));
+
+            if($customCampaignSettings != null)
+            {
+                $this->entityManager->remove($customCampaignSettings);
+                $this->entityManager->flush();
+            }
+        }
+    }
+
 } 

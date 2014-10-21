@@ -12,7 +12,7 @@ use Application\Service\DoctrineService;
 use Setting\Entity\Customer;
 use Setting\Facade\CustomerSettingFacade;
 
-class CustomerSettingService extends DoctrineService
+class CustomerSettingsService extends DoctrineService
 {
     const ENTITY_NAME = 'Setting\Entity\Customer';
     const ENTITY_CUSTOM_FIELDS = 'Setting\Entity\CustomField';
@@ -38,7 +38,7 @@ class CustomerSettingService extends DoctrineService
      */
     private function getCustomFields($accountId)
     {
-        $customFieldEntity =  $this->getPixiepadEntityManager()->getRepository(self::ENTITY_CUSTOM_FIELDS);
+        $customFieldEntity =  $this->getEntityManager()->getRepository(self::ENTITY_CUSTOM_FIELDS);
         $customFields = $customFieldEntity->findBy(array('account_id' => $accountId));
 
         return $customFields;
@@ -80,9 +80,6 @@ class CustomerSettingService extends DoctrineService
     public function createByAccountId($accountId)
     {
         $customerFields = $this->getAllFields();
-        /*$customerFields = array_merge($customerFields,
-            CustomerSettingFacade::formatCustomFields($this->getCustomFields($accountId)));
-        */
 
         foreach($customerFields as $key => $value)
         {
@@ -144,6 +141,20 @@ class CustomerSettingService extends DoctrineService
             }
         }
         return true;
+    }
+
+    /**
+     * @param $accountId
+     */
+    public function deleteByAccountId($accountId)
+    {
+        $customerSettings = $this->getByAccountId($accountId);
+
+        foreach($customerSettings as $customerSetting)
+        {
+            $this->getPixiepadEntityManager()->remove($customerSetting);
+            $this->getPixiepadEntityManager()->flush();
+        }
     }
 
 }

@@ -169,4 +169,31 @@ class TransactionController extends AbstractRestfulController
         }
     }
 
+    /**
+     * @return JsonModel
+     * @throws \Exception
+     */
+    public function addPointsAction()
+    {
+        $user = $this->zfcUserAuthentication()->getIdentity();
+        if(UserHelper::isMerchant($user) && (RequestHelper::isPost($this->getRequest())))
+        {
+            $customerCode = $this->getRequest()->getPost()->get('customerCode');
+            $campaignId = $this->getRequest()->getPost()->get('campaignId');
+            $amount = $this->getRequest()->getPost()->get('amount');
+
+            $promoId = $this->getRequest()->getPost()->get('promoId');
+            $authorization = $this->getRequest()->getPost()->get('authorization');
+
+            $transactionAdapter = $this->getServiceLocator()->get('transactionAdapter');
+            $transactionAdapter->setUser($user);
+
+            if($transactionAdapter->manuallyAddPoint($customerCode, $campaignId, $amount,
+                $authorization, $promoId))
+            {
+                return new JsonModel(array('message' => 'Transaction successfully done'));
+            }
+        }
+    }
+
 }

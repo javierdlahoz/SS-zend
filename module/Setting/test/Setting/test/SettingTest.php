@@ -24,7 +24,7 @@ class SettingTest extends AbstractHttpControllerTestCase{
         parent::setUp();
         $this->settingService = new SettingService(Bootstrap::getServiceManager());
     }
-    
+
     public function testCreateByAccountId()
     {
         $this->settingService->createByAccountId(self::ACCOUNT_ID);

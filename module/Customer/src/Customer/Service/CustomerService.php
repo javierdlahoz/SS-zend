@@ -100,8 +100,9 @@ class CustomerService extends AbstractService
 
     /**
      * @param $post
-     * @param $accountId
-     * @throws \Exception
+     * @param $user
+     * @internal param $accountId
+     *
      */
     public function add($post, $user)
     {
@@ -184,5 +185,16 @@ class CustomerService extends AbstractService
             ->findBy(array('account_id' => $accountId));
 
         return $customFields;
+    }
+
+    /**
+     * @param Customer $customer
+     * @param $accountId
+     * @throws \Exception
+     */
+    public function deleteCustomer(Customer $customer, $accountId)
+    {
+        $this->setEntity(self::PROFILE.$accountId);
+        $this->delete(array("unique_id" => $customer->getUniqueId()));
     }
 }

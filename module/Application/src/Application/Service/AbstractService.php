@@ -383,4 +383,46 @@ class AbstractService
             throw new \Exception($ex->getMessage());
         }
     }
+
+    /**
+     * @param $queryArray
+     * @throws \Exception
+     * @internal param $query
+     *
+     */
+    protected function delete($queryArray)
+    {
+        $query = "DELETE FROM {$this->getEntity()} WHERE ";
+        $condition = "";
+
+        $isFirst = true;
+        foreach ($queryArray as $key => $value)
+        {
+            if($isFirst)
+            {
+                if($value!=null)
+                {
+                    $condition = $key." = '{$value}'";
+                    $isFirst = false;
+                }
+            }
+            else
+            {
+                if($value!=null)
+                {
+                    $condition .= ", ".$key." = '{$value}'";
+                }
+            }
+        }
+        $query .= $condition;
+        try
+        {
+            $this->executeQuery($query);
+        }
+        catch(\Exception $ex)
+        {
+            throw new \Exception($ex->getMessage());
+        }
+
+    }
 }
