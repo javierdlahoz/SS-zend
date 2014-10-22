@@ -38,6 +38,7 @@ class CustomerAdapter extends StickyStreetAdapter
      */
     public function add(array $customer)
     {
+
         $this->prepareParams();
         unset($this->params['code']);
         unset($this->params['campaign_id']);
@@ -50,6 +51,7 @@ class CustomerAdapter extends StickyStreetAdapter
         {
             $this->params[$key] = $value;
         }
+
 
         return $this->sendRequest($this->params, true);
     }

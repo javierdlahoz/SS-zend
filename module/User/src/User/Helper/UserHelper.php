@@ -87,16 +87,16 @@ class UserHelper
         $accounts = $this->getServiceLocator()->get(AbstractService::STICKY_STREET_ENTITY_MANAGER)
                         ->getRepository('User\Entity\Account')->findBy(array('username' => $user->getAccount()));
 
-        $accountUser = $this->getServiceLocator()->get(AbstractService::STICKY_STREET_ENTITY_MANAGER)
-            ->getRepository('User\Entity\AccountUser')
-                ->findOneBy(
-                    array('account_id' => $user->getAccount(),
-                            'role' => "A"
-                    ));
+//        $accountUser = $this->getServiceLocator()->get(AbstractService::STICKY_STREET_ENTITY_MANAGER)
+//            ->getRepository('User\Entity\AccountUser')
+//                ->findOneBy(
+//                    array('account_id' => $user->getAccount(),
+//                            'role' => "A"
+//                    ));
 
         $account = $accounts[0];
         return array(
-            "userId" => $accountUser->getUsername(),
+            "userId" => $user->getAccount(),
             "token" => $account->getApiToken(),
             "accountId" => $user->getAccount()
         );

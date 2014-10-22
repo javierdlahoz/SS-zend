@@ -186,11 +186,14 @@ class CampaignSettingsService {
      * @param $accountId
      * @return array
      */
-    public function getSettingsByCampaign($accountId)
+    public function getSettingsByCampaign($accountId, $isNotATest = true)
     {
 
-        $this->createUserCampaign($accountId);
-        $this->createCampaignSettings($accountId);
+        if($isNotATest)
+        {
+            $this->createUserCampaign($accountId);
+            $this->createCampaignSettings($accountId);
+        }
 
         $campaings = CampaignFacade::formatCampaignList(
             $this->serviceLocator->get('campaignService')->getActiveCampaigns($accountId));
@@ -257,8 +260,14 @@ class CampaignSettingsService {
 
             if($customCampaignSettings != null)
             {
-                $this->entityManager->remove($customCampaignSettings);
-                $this->entityManager->flush();
+                try{
+                    $this->entityManager->remove($customCampaignSettings);
+                    $this->entityManager->flush();
+                }
+                catch(\Exception $ex)
+                {
+                    throw new \Exception($ex->getMessage());
+                }
             }
         }
     }

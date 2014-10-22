@@ -17,7 +17,7 @@ error_reporting(0);
 class CampaignSettingsServiceTest extends AbstractHttpControllerTestCase{
 
     private $campaignSettingService;
-    const ACCOUNT_ID = "dee3c";
+    const ACCOUNT_ID = "Mx_toks";
 
     public function setUp()
     {
@@ -31,15 +31,15 @@ class CampaignSettingsServiceTest extends AbstractHttpControllerTestCase{
         $this->assertNotNull($campaignSettings);
     }
 
-    public function testDeleteCampaignSettings()
-    {
-        $this->campaignSettingService->deleteCampaignSettings(self::ACCOUNT_ID);
-        $campaignSettings = $this->campaignSettingService->getSettingsByCampaign(self::ACCOUNT_ID, false);
-
-        foreach($campaignSettings as $campaignSetting)
-        {
-            $this->assertCount(0, $campaignSetting["campaignSettings"]);
-        }
-    }
+//    public function testDeleteCampaignSettings()
+//    {
+//        $this->campaignSettingService->deleteCampaignSettings(self::ACCOUNT_ID);
+//        $campaignSettings = $this->campaignSettingService->getSettingsByCampaign(self::ACCOUNT_ID, false);
+//
+//        foreach($campaignSettings as $campaignSetting)
+//        {
+//            $this->assertCount(0, $campaignSetting["campaignSettings"]);
+//        }
+//    }
 
 } 

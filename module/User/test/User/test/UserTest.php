@@ -22,9 +22,9 @@ class UserTest extends AbstractHttpControllerTestCase{
     private $loginAdapter;
     private $request;
 
-    const USERNAME = "salongeeks_test";
-    const PASSWORD = "salongeeks_test";
-    const PIN = 2222;
+    const USERNAME = "biscuit";
+    const PASSWORD = "biscuit";
+    const PIN = 7777;
     const ACCOUNT_ID = "salongeeks";
 
     public function setUp()
@@ -42,7 +42,6 @@ class UserTest extends AbstractHttpControllerTestCase{
 
         $user = $this->loginAdapter->login($this->request->getPost());
         $this->assertInstanceOf('User\Entity\User', $user);
-
     }
 
     public function testLoginWithPIN()

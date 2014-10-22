@@ -139,7 +139,6 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
                 {
                     throw new \Exception(self::AGENCY_DELETED_MESSAGE);
                 }
-
                 return $this->createUserFromAccountUsers($accountUser);
             }
 
@@ -160,8 +159,8 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
             if(isset($result[0])) {
 				$message = $result[0];
 			}
-
             throw new \Exception($message);
+
         }
 
         $accountUser = $this->getAccountUsersByParams($params);
@@ -173,6 +172,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         {
             throw new \Exception(self::USER_DELETED_MESSAGE);
         }
+        $user = $this->getAuthPlugin()->getIdentity();
 		
 		return $user;
 	}
@@ -331,6 +331,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 
         return $users[0];
     }
+
 
     /**
      * @param $accountId
