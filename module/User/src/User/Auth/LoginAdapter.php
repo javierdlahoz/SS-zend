@@ -12,6 +12,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 {
 
     const AGENCY_DELETED_MESSAGE = 'The agency has been deleted';
+    const USER_DELETED_MESSAGE = 'The user has been deleted';
     const CHECK_CREDENTIALS_MESSAGE = 'Please check your credentials';
     /**
      * @return mixed
@@ -134,7 +135,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 
             if($accountUser != null && !$isRegistered)
             {
-                if($this->getIsDeleted($accountUser->getAccountId()))
+                if($this->getAgencyIsDeleted($accountUser->getAccountId()))
                 {
                     throw new \Exception(self::AGENCY_DELETED_MESSAGE);
                 }
@@ -162,13 +163,16 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 
             throw new \Exception($message);
         }
+
         $accountUser = $this->getAccountUsersByParams($params);
-        if($this->getIsDeleted($accountUser->getAccountId()))
+        if($this->getAgencyIsDeleted($accountUser->getAccountId()))
         {
             throw new \Exception(self::AGENCY_DELETED_MESSAGE);
         }
-
-        $user = $this->getAuthPlugin()->getIdentity();
+        if($this->getUserIsDeleted($credentials['username']))
+        {
+            throw new \Exception(self::USER_DELETED_MESSAGE);
+        }
 		
 		return $user;
 	}
@@ -245,13 +249,16 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
     private function getAccountUsersByParams($params)
     {
         $entityManager = $this->getEntityManagerStickyStreet();
-        $accounts = $entityManager->getRepository('User\Entity\AccountUser')->findBy(array('username' => $params['identity']));
+        $account = $entityManager->getRepository('User\Entity\AccountUser')->
+                        findOneBy(
+                            array('username' => $params['identity'],
+                                  'user_deleted' => "N"));
 
-        if(!empty($accounts))
+        if(!empty($account))
         {
-            if($accounts[0]->getPassword() == $params['credential'])
+            if($account->getPassword() == $params['credential'])
             {
-                return $accounts[0];
+                return $account;
             }
         }
         else
@@ -329,12 +336,31 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
      * @param $accountId
      * @return bool
      */
-    private function getIsDeleted($accountId)
+    private function getAgencyIsDeleted($accountId)
     {
         $entityManager = $this->getEntityManagerStickyStreet();
         $agency = $entityManager->getRepository('User\Entity\Account')->findOneBy(array('username' => $accountId));
 
         if($agency->getAgencyToken() == "deleted")
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $username
+     * @return bool
+     */
+    private function getUserIsDeleted($username)
+    {
+        $entityManager = $this->getEntityManagerStickyStreet();
+        $agency = $entityManager->getRepository('User\Entity\AccountUser')
+                        ->findOneBy(
+                            array('username' => $username));
+
+        if($agency->getUserDeleted() == "Y")
         {
             return true;
         }
