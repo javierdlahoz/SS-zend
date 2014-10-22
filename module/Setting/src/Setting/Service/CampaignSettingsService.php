@@ -152,14 +152,18 @@ class CampaignSettingsService {
                                         $this->getServiceLocator()->get('transactionService')
                                             ->getCustomFields($accountId));
 
-        $customTransactionFields = array_merge($customTransactionFields, $this->options);
+        if($customTransactionFields == null)
+        {
+            $customTransactionFields = $this->options;
+        }
+        else{
+            $customTransactionFields = array_merge($customTransactionFields, $this->options);
+        }
 
-        $campaings = CampaignFacade::formatCampaignList(
+        $campaigns = CampaignFacade::formatCampaignList(
             $this->serviceLocator->get('campaignService')->getActiveCampaigns($accountId));
 
-
-
-        foreach($campaings as $campaign)
+        foreach($campaigns as $campaign)
         {
             foreach($customTransactionFields as $customTransactionField)
             {

@@ -10,6 +10,9 @@ use User\Entity\AccountUser;
 
 class LoginAdapter extends AbstractAdapter implements IAdapter
 {
+
+    const AGENCY_DELETED_MESSAGE = 'The agency has been deleted';
+    const CHECK_CREDENTIALS_MESSAGE = 'Please check your credentials';
     /**
      * @return mixed
      */
@@ -127,10 +130,15 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         if(!$auth->isValid())
         {
             $isRegistered = $this->isRegistered($credentials);
-
             $accountUser = $this->getAccountUsersByParams($params);
+
             if($accountUser != null && !$isRegistered)
             {
+                if($this->getIsDeleted($accountUser->getAccountId()))
+                {
+                    throw new \Exception(self::AGENCY_DELETED_MESSAGE);
+                }
+
                 return $this->createUserFromAccountUsers($accountUser);
             }
 
@@ -154,6 +162,12 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 
             throw new \Exception($message);
         }
+        $accountUser = $this->getAccountUsersByParams($params);
+        if($this->getIsDeleted($accountUser->getAccountId()))
+        {
+            throw new \Exception(self::AGENCY_DELETED_MESSAGE);
+        }
+
         $user = $this->getAuthPlugin()->getIdentity();
 		
 		return $user;
@@ -242,7 +256,7 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
         }
         else
         {
-            throw new \Exception('Please check your credentials');
+            throw new \Exception(self::CHECK_CREDENTIALS_MESSAGE);
         }
     }
 
@@ -305,10 +319,27 @@ class LoginAdapter extends AbstractAdapter implements IAdapter
 
         if(empty($users))
         {
-            throw new \Exception("There's no registered user with this PIN");
+            throw new \Exception(self::CHECK_CREDENTIALS_MESSAGE);
         }
 
         return $users[0];
+    }
+
+    /**
+     * @param $accountId
+     * @return bool
+     */
+    private function getIsDeleted($accountId)
+    {
+        $entityManager = $this->getEntityManagerStickyStreet();
+        $agency = $entityManager->getRepository('User\Entity\Account')->findOneBy(array('username' => $accountId));
+
+        if($agency->getAgencyToken() == "deleted")
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**

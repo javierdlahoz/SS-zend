@@ -43,6 +43,28 @@ class Account
      */
     private $name;
 
+    /**
+     * @ORM\Column(type="string", name="agency_token", nullable=false)
+     * @var string
+     */
+    private $agency_token;
+
+    /**
+     * @return string
+     */
+    public function getAgencyToken()
+    {
+        return $this->agency_token;
+    }
+
+    /**
+     * @param string $agency_token
+     */
+    public function setAgencyToken($agency_token)
+    {
+        $this->agency_token = $agency_token;
+    }
+
 
     /**
      * @param string $accountId
