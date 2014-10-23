@@ -33,10 +33,16 @@ class CustomFieldFacade {
      */
     public function formatCustomField(CustomField $customField)
     {
+        $label = $customField->getFieldLabel();
+        if($label == null)
+        {
+            $label = $customField->getFieldName();
+        }
+
         return array(
             "id" => $customField->getId(),
             "name" => $customField->getFieldName(),
-            "label" => $customField->getFieldLabel(),
+            "label" => $label,
             "type" => $customField->getFieldType(),
             "choices" => self::formatChoices($customField->getFieldChoices()),
             "isShown" => $customField->getFieldShow()

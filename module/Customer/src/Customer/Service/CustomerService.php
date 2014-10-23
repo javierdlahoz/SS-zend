@@ -10,11 +10,32 @@ namespace Customer\Service;
 
 use Application\Service\AbstractService;
 use Customer\Entity\Customer;
+use Setting\Entity\CustomField;
 
 
 class CustomerService extends AbstractService
 {
     const FIELDS = "first_name, last_name, email, card_number";
+
+    /**
+     * @return array
+     */
+    private function getCustomerFields()
+    {
+        return array(
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "card_number",
+            "city",
+            "state",
+            "country",
+            "address1",
+            "address2",
+            "custom_date"
+        );
+    }
 
     /**
      * @return \Application\Service\mysqli_result
@@ -86,10 +107,10 @@ class CustomerService extends AbstractService
     public function getByText($text, $accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
-        $query = "WHERE first_name LIKE '%{$text}%' OR last_name LIKE '%{$text}%' OR card_code LIKE '%{$text}%'";
+        $query = " WHERE first_name LIKE '%{$text}%' OR last_name LIKE '%{$text}%' OR card_code LIKE '%{$text}%'";
         $query .= " OR card_number LIKE '%{$text}%' OR phone LIKE '%{$text}%' OR email LIKE '%{$text}%'";
 
-        $sqlResults = $this->select("*", $query);
+        $sqlResults = $this->select("*, custom1 AS custom_field_1", $query);
         foreach($sqlResults as $sqlResult)
         {
             $customers[] = new Customer($sqlResult, self::getCustomFields($accountId));
@@ -164,9 +185,14 @@ class CustomerService extends AbstractService
                     $customerArray[$customField['name']] = $customField['value'];
                 }
             }
+            if($customerArray['custom_field_1'] != null)
+            {
+                $customerArray['custom1'] = $customerArray['custom_field_1'];
+                unset($customerArray['custom_field_1']);
+            }
 
-            $where = array('card_code' => $customer->getCardCode());
-            $this->edit($customerArray, $where);
+
+            $this->edit($customerArray, array('card_code' => $customer->getCardCode()));
         }
         else
         {
@@ -182,9 +208,9 @@ class CustomerService extends AbstractService
     {
         $entityManager = $this->getServiceLocator()->get(self::STICKY_STREET_ENTITY_MANAGER);
         $customFields = $entityManager->getRepository('Customer\Entity\CustomField')
-            ->findBy(array('account_id' => $accountId));
+            ->findBy(array('account_id' => $accountId, 'field_show' => 'Y'));
 
-        return $customFields;
+        return self::deleteCustomerFieldsOnCustomFields($customFields);
     }
 
     /**
@@ -196,5 +222,35 @@ class CustomerService extends AbstractService
     {
         $this->setEntity(self::PROFILE.$accountId);
         $this->delete(array("unique_id" => $customer->getUniqueId()));
+    }
+
+    /**
+     * @param array $customFields
+     * @return array
+     */
+    private function deleteCustomerFieldsOnCustomFields(array $customFields)
+    {
+        $customFieldsToReturn = array();
+        $customerFields = self::getCustomerFields();
+        for($j=0; $j < count($customFields); $j++)
+        {
+            $control = true;
+
+            for($i=0; $i < count($customerFields); $i++)
+            {
+                if($customFields[$j]->getFieldName() == $customerFields[$i])
+                {
+                    $control = false;
+                }
+            }
+
+            if($control)
+            {
+                $customFieldsToReturn[] = $customFields[$j];
+            }
+
+        }
+
+        return $customFieldsToReturn;
     }
 }

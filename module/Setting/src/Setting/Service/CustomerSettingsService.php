@@ -71,6 +71,10 @@ class CustomerSettingsService extends DoctrineService
      */
     public function getByAccountId($accountId)
     {
+        $customerSettings = $this->getEntity()->findBy(array('account_id' => $accountId));
+        $customFields = $this->getServiceLocator()->get('customerService')->getCustomFields($accountId);
+        self::validateAllStored($customFields, $customerSettings);
+
         return $this->getEntity()->findBy(array('account_id' => $accountId));
     }
 
@@ -96,20 +100,11 @@ class CustomerSettingsService extends DoctrineService
             $this->getPixiepadEntityManager()->flush();
         }
 
-        $customFields = $this->getCustomFields($accountId);
+        $customFields = $this->getServiceLocator()->get('customerService')->getCustomFields($accountId);
+
         foreach($customFields as $customField)
         {
-            $customerSettings = new Customer();
-
-            $customerSettings->setAccountId($accountId);
-            $customerSettings->setCustomFieldName($customField->getFieldName());
-            $customerSettings->setCustomFieldLabel($customField->getFieldLabel());
-            $customerSettings->setCustomFieldType($customField->getFieldType());
-            $customerSettings->setCustomFieldShow("Y");
-            $customerSettings->setIsAvailable(1);
-
-            $this->getPixiepadEntityManager()->persist($customerSettings);
-            $this->getPixiepadEntityManager()->flush();
+            self::createCustomerSettingEntry($accountId, $customField);
         }
 
     }
@@ -155,6 +150,55 @@ class CustomerSettingsService extends DoctrineService
             $this->getPixiepadEntityManager()->remove($customerSetting);
             $this->getPixiepadEntityManager()->flush();
         }
+    }
+
+    /**
+     * @param $customFields
+     * @param $customerSettings
+     */
+    private function validateAllStored($customFields, $customerSettings)
+    {
+        foreach($customFields as $customField)
+        {
+            $control = true;
+            foreach($customerSettings as $customerSetting)
+            {
+                if($customerSetting->getCustomFieldName() == $customField->getFieldName())
+                {
+                    $control = false;
+                }
+            }
+
+            if($control)
+            {
+                self::createCustomerSettingEntry($customerSetting->getAccountId(), $customField);
+            }
+        }
+    }
+
+    /**
+     * @param $accountId
+     * @param $customField
+     */
+    private function createCustomerSettingEntry($accountId, $customField)
+    {
+        $customerSettings = new Customer();
+
+        $label = $customField->getFieldLabel();
+        if($label == null)
+        {
+            $label = $customField->getFieldName();
+        }
+
+        $customerSettings->setAccountId($accountId);
+        $customerSettings->setCustomFieldName($customField->getFieldName());
+        $customerSettings->setCustomFieldLabel($label);
+        $customerSettings->setCustomFieldType($customField->getFieldType());
+        $customerSettings->setCustomFieldShow("Y");
+        $customerSettings->setIsAvailable(1);
+
+        $this->getPixiepadEntityManager()->persist($customerSettings);
+        $this->getPixiepadEntityManager()->flush();
     }
 
 }
