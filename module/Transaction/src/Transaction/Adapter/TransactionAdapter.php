@@ -11,7 +11,7 @@ class TransactionAdapter extends StickyStreetAdapter
     const REDEEM = "redeem";
     const RECORD = "record_activity";
     const BATCH_TRANSACTIONS = "batch_transactions";
-    const DELIMITER = "tab";
+    const DELIMITER = "pipe";
     const APPLY_RATIO = "no";
 
     /**
@@ -216,9 +216,16 @@ class TransactionAdapter extends StickyStreetAdapter
         $this->params['type'] = self::BATCH_TRANSACTIONS;
         $this->params['delimiter'] = self::DELIMITER;
         $this->params['apply_ratio'] = self::APPLY_RATIO;
+        
+        $this->params['visits_header_1'] = "campaign_id";
+        $this->params['visits_header_2'] = "code";
+        $this->params['visits_header_3'] = "redeemed";
+        $this->params['visits_header_4'] = "amount";
+        $this->params['visits_header_5'] = "date";
+        $this->params['visits_header_6'] = "authorization";
 
         if($authorization == null){
-            $authorization = "none";
+            $authorization = "";
         }
 
         if($promoId != null){
@@ -226,11 +233,9 @@ class TransactionAdapter extends StickyStreetAdapter
         }
 
         unset($this->params['user_password']);
+        unset($this->params['campaign_id']);
 
-        $this->params['Visits_Data'] = "{$campaignId}|{$customerCode}|N|{$amount}|none|{$authorization}{$promoId}";
-
-        var_dump($this->params);
-        die();
+        $this->params['Visits_Data'] = "{$campaignId}|{$customerCode}|N|{$amount}||{$authorization}{$promoId}";
 
         return $this->sendRequest();
     }

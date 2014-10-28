@@ -181,7 +181,6 @@ class TransactionController extends AbstractRestfulController
             $customerCode = $this->getRequest()->getPost()->get('customerCode');
             $campaignId = $this->getRequest()->getPost()->get('campaignId');
             $amount = $this->getRequest()->getPost()->get('amount');
-
             $promoId = $this->getRequest()->getPost()->get('promoId');
             $authorization = $this->getRequest()->getPost()->get('authorization');
 

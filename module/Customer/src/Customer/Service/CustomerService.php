@@ -148,6 +148,12 @@ class CustomerService extends AbstractService
             $customerArray[$customField->getFieldName()] = $post->get($customField->getFieldName());
         }
 
+        if($customerArray['custom_field_1'] != null)
+        {
+            $customerArray['custom1'] = $customerArray['custom_field_1'];
+            unset($customerArray['custom_field_1']);
+        }
+
         $customerAdapter = $this->getServiceLocator()->get('customerAdapter');
         $customerAdapter->setUser($user);
         $customerAdapter->add($customerArray);
