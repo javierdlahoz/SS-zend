@@ -107,8 +107,7 @@ class CustomerService extends AbstractService
     public function getByText($text, $accountId)
     {
         $this->setEntity(self::PROFILE.$accountId);
-        $query = " WHERE first_name LIKE '%{$text}%' OR last_name LIKE '%{$text}%' OR card_code LIKE '%{$text}%'";
-        $query .= " OR card_number LIKE '%{$text}%' OR phone LIKE '%{$text}%' OR email LIKE '%{$text}%'";
+        $query = self::buildQuery($text, $accountId);
 
         $sqlResults = $this->select("*, custom1 AS custom_field_1", $query);
         foreach($sqlResults as $sqlResult)
@@ -117,6 +116,44 @@ class CustomerService extends AbstractService
         }
 
         return $customers;
+    }
+    
+    /**
+     * 
+     * @param string $text
+     * @param string $accountId
+     * @return string
+     */
+    private function buildQuery($text, $accountId)
+    {
+    	$customFields = self::getCustomFields($accountId);
+    	$customerFields = self::getCustomerFields();
+    	$query = " WHERE ";
+    	$isFirst = true;
+    	
+    	foreach($customerFields as $customerField)
+    	{
+    		if($isFirst){
+    			$query .= $customerField." LIKE '%{$text}%' ";
+    			$isFirst = false;
+    		}
+    		else{
+    			$query .= "OR ".$customerField." LIKE '%{$text}%' ";
+    		}
+    	}
+    	
+    	foreach($customFields as $customField)
+    	{
+    		if($customField->getFieldSearchable() == true)
+    		{
+    			if($customField->getFieldName() == "custom_field_1"){
+    				$customField->setFieldName("custom1");
+    			}
+    			$query .= "OR ".$customField->getFieldName()." LIKE '%{$text}%' ";
+    		}	
+    	}
+
+    	return $query;
     }
 
     /**

@@ -2,7 +2,7 @@ ALTER TABLE `lp_settings` MODIFY COLUMN `currency_glyph` VARCHAR(1) CHARACTER SE
 
 ALTER TABLE `lp_settings` MODIFY COLUMN `currency_glyph` VARCHAR(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '$';
 
-ALTER TABLE `823542_pixiedev`.`lp_settings`
+ALTER TABLE `lp_settings`
 ADD COLUMN `scanning_method` VARCHAR(10) NULL DEFAULT 'qr' AFTER `points_CTransPickList`,
 ADD COLUMN `alert_preferences` VARCHAR(45) NULL DEFAULT 'email' AFTER `scanning_method`;
 
@@ -18,12 +18,12 @@ CREATE TABLE `app_users` (
   KEY `_ID` (`app_user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
-ALTER TABLE `823542_pixiedev`.`lp_customfields`
+ALTER TABLE `lp_customfields`
 ADD COLUMN `unique_id` INT NOT NULL AUTO_INCREMENT AFTER `is_available`,
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (`unique_id`, `account_id`, `custom_field_name`);
 
-CREATE TABLE `823542_pixiedev`.`lp_customlanguage` (
+CREATE TABLE `lp_customlanguage` (
   `account_id` VARCHAR(100) NOT NULL,
   `custom_language` TEXT NOT NULL,
   PRIMARY KEY(`account_id`)
@@ -31,7 +31,7 @@ CREATE TABLE `823542_pixiedev`.`lp_customlanguage` (
 ENGINE = InnoDB
 CHARACTER SET utf8;
 
-ALTER TABLE `823542_pixiedev`.`lp_settings`
+ALTER TABLE `lp_settings`
 ADD COLUMN `allow_text_message_on_add` TINYINT(1) NULL DEFAULT 0 AFTER `alert_preferences`,
 ADD COLUMN `allow_text_message_on_redeem` TINYINT(1) NULL DEFAULT 0 AFTER `allow_text_message_on_add`,
 ADD COLUMN `text_message_on_add` TEXT NULL AFTER `allow_text_message_on_redeem`,
