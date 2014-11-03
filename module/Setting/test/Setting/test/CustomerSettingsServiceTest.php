@@ -36,7 +36,7 @@ class CustomerSettingsServiceTest extends AbstractHttpControllerTestCase{
     public function testDeleteByAccountId()
     {
         $this->customerSettingService->deleteByAccountId(self::ACCOUNT_ID);
-        $customerSettings = $this->customerSettingService->getByAccountId(self::ACCOUNT_ID);
+        $customerSettings = $this->customerSettingService->getCustomFieldsByAccountId(self::ACCOUNT_ID);
 
         $this->assertCount(0, $customerSettings);
     }

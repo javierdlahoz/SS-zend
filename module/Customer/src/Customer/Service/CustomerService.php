@@ -152,7 +152,8 @@ class CustomerService extends AbstractService
     			$query .= "OR ".$customField->getFieldName()." LIKE '%{$text}%' ";
     		}	
     	}
-
+        $query .= "OR card_code LIKE '%{$text}%' ";
+        
     	return $query;
     }
 

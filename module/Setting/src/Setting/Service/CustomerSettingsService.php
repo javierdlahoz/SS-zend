@@ -73,8 +73,12 @@ class CustomerSettingsService extends DoctrineService
     {
         $customerSettings = $this->getEntity()->findBy(array('account_id' => $accountId));
         $customFields = $this->getServiceLocator()->get('customerService')->getCustomFields($accountId);
-        self::validateAllStored($customFields, $customerSettings);
+        if(count($customerSettings) <= 0)
+        {
+            self::createByAccountId($accountId);
+        }
 
+        self::validateAllStored($customFields, $customerSettings);
         return $this->getEntity()->findBy(array('account_id' => $accountId));
     }
 
@@ -193,12 +197,51 @@ class CustomerSettingsService extends DoctrineService
         $customerSettings->setAccountId($accountId);
         $customerSettings->setCustomFieldName($customField->getFieldName());
         $customerSettings->setCustomFieldLabel($label);
-        $customerSettings->setCustomFieldType($customField->getFieldType());
+        $customerSettings->setCustomFieldType(
+            self::formatCustomFieldType($customField->getFieldType()));
         $customerSettings->setCustomFieldShow("Y");
         $customerSettings->setIsAvailable(1);
 
         $this->getPixiepadEntityManager()->persist($customerSettings);
         $this->getPixiepadEntityManager()->flush();
+    }
+
+    /**
+     * @param  string $customFieldType 
+     * @return string
+     */
+    private function formatCustomFieldType($customFieldType)
+    {
+        switch ($customFieldType) {
+            case 'L':
+                return "List";
+                break;
+            case 'P':
+                return "Pick";
+                break;
+
+            case 'D':
+                return "Date";
+                break;
+                
+            case 'T':
+                return "Text";
+                break;
+
+            default:
+                return $customFieldType;
+                break;
+        }
+    }
+
+    /**
+     * 
+     * @param  string $accountId
+     * @return Setting\Entity\Customer
+     */
+    public function getCustomFieldsByAccountId($accountId)
+    {
+        return $this->getEntity()->findBy(array('account_id' => $accountId));
     }
 
 }

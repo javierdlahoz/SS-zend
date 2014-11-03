@@ -33,10 +33,10 @@ return array(
                 // connection parameters, see
                 // http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
                 'params' => array(
-                    'host'     => 'localhost',
+                    'host'     => '72.3.165.41',
                     'port'     => '3306',
-                    'user'     => 'root',
-                    'password' => 'Test4Echo',
+                    'user'     => '823542_pixiedev',
+                    'password' => 'vCYUQtwn8Kra',
                     'dbname'   => '823542_pixiedev',
                 )
             ),
