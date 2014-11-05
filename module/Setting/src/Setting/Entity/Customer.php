@@ -22,20 +22,20 @@ class Customer
      * @var integer
      *
      * @ORM\Column(name="unique_id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue
      */
     private $id;
 
     /**
      * @ORM\Column(name="account_id", type="string", nullable=true)
      * @var string
+     * @ORM\Id
      */
     private $account_id;
 
     /**
      * @ORM\Column(name="custom_field_name", type="string", nullable=true)
      * @var string
+     * @ORM\Id
      */
     private $custom_field_name;
 
